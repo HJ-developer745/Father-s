@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
@@ -70,7 +69,7 @@
     <div id="modal-overlay" class="fixed inset-0 bg-black/70 backdrop-blur-md z-40 hidden flex items-center justify-center p-4">
         
         <!-- Passcode Required Modal -->
-        <div id="passcode-modal" class="bg-darkPanel rounded-2xl w-full max-w-sm border border-darkBorder p-6 hidden flex-col shadow-2xl animate-in fade-in duration-200">
+        <div id="passcode-modal" class="bg-darkPanel rounded-2xl w-full max-w-sm border border-darkBorder p-6 hidden flex-col shadow-2xl">
             <h3 class="text-xl font-bold mb-2 flex items-center gap-2 text-yellow-500">
                 <i class="ph ph-lock-key text-2xl"></i> Security Verification
             </h3>
@@ -319,10 +318,22 @@
                     <p class="text-xs text-slate-400 mt-1 uppercase tracking-wider">SECURE CONNECTION READY</p>
                 </div>
 
+                <!-- Credential Display to Assist Joining & Testing -->
+                <div class="bg-slate-950 p-4 rounded-2xl border border-darkBorder space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-slate-400">Meeting ID:</span>
+                        <span id="prejoin-disp-id" class="font-bold mono select-all">---</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-400">Passcode:</span>
+                        <span id="prejoin-disp-pass" class="font-bold text-green-400 mono select-all">None</span>
+                    </div>
+                </div>
+
                 <!-- Custom Feature 1: Virtual Background Control -->
                 <div class="space-y-2">
                     <label class="block text-xs text-slate-400 font-bold tracking-wider">SELECT FILTER / BACKGROUND</label>
-                    <select id="bg-filter-select" onchange="Prejoin.changeFilter(this.value)" class="w-full bg-slate-950 border border-darkBorder text-slate-200 rounded-xl px-4 py-2.5 outline-none focus:ring-1 focus:ring-primary">
+                    <select id="bg-filter-select" onchange="PreJoin.changeFilter(this.value)" class="w-full bg-slate-950 border border-darkBorder text-slate-200 rounded-xl px-4 py-2.5 outline-none focus:ring-1 focus:ring-primary">
                         <option value="none">None (Standard Video Feed)</option>
                         <option value="blur">Blur Background (Soft Focus)</option>
                         <option value="sepia">Vintage Sepia Filter</option>
@@ -438,7 +449,7 @@
                 <!-- People / Waiting Queue tab panel -->
                 <div id="tab-panel-people" class="flex-1 flex flex-col hidden h-full">
                     <div class="p-3 bg-slate-950/20 border-b border-darkBorder">
-                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Raised Hands / Attendees Queue</span>
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Raised Hands / Attendees Queue</span>
                     </div>
                     <div id="queue-scroller" class="p-3 space-y-2 max-h-[140px] overflow-y-auto border-b border-darkBorder bg-slate-950/40 hidden">
                         <!-- Raised hands lists dynamically -->
@@ -696,7 +707,7 @@
                     Dashboard.init();
                 }
                 
-                // Deep-linking parsing from URL search params (e.g., meetId & password automatic login bypass)
+                // Deep-linking parsing from URL search params
                 const params = new URLSearchParams(window.location.search);
                 const queryId = params.get('joinId');
                 const queryPwd = params.get('pwd');
@@ -844,16 +855,25 @@
                 }
                 
                 AppState.activeMeeting.id = id;
-                AppState.activeMeeting.passcode = pwd;
+                AppState.activeMeeting.passcode = pwd || null;
                 AppState.activeMeeting.isHost = false;
                 
                 PreJoin.init();
             },
             performAutoLinkJoin(id, pwd) {
                 AppState.activeMeeting.id = id;
-                AppState.activeMeeting.passcode = pwd;
+                AppState.activeMeeting.passcode = pwd || null;
                 AppState.activeMeeting.isHost = false;
                 PreJoin.init();
+            },
+            verifyPasscodeAndJoin() {
+                const entered = document.getElementById('input-verify-passcode').value.trim();
+                if (entered === AppState.activeMeeting.passcode) {
+                    UI.closeModals();
+                    PreJoin.launchDirect();
+                } else {
+                    UI.showToast("Incorrect Passcode. Access Denied.", "error");
+                }
             },
             completeScheduling() {
                 const subject = document.getElementById('sch-subject').value;
@@ -873,7 +893,7 @@
                 list.push({ id, passcode, subject, date, time });
                 localStorage.setItem('scheduled_rooms', JSON.stringify(list));
                 
-                // Custom Feature 15: Create ICS Calendar Invitation
+                // ICS Calendar Invitation
                 const icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nSUMMARY:" + subject + "\nDESCRIPTION:Join MeetFlow Pro Secure Room: " + id + " Code: " + passcode + "\nDTSTART:" + date.replace(/-/g,'') + "T" + time.replace(':','') + "00\nEND:VEVENT\nEND:VCALENDAR";
                 const blob = new Blob([icsContent], {type: 'text/calendar'});
                 const url = URL.createObjectURL(blob);
@@ -915,7 +935,7 @@
                 const list = JSON.parse(localStorage.getItem('session_history') || '[]');
                 
                 if(list.length === 0) {
-                    container.innerHTML = '<p class="text-xs text-slate-500 text-center py-4">No historical sessions</p>';
+                    container.innerHTML = '<p class="text-xs text-slate-500 text-center py-4">No previous sessions detected</p>';
                     return;
                 }
                 
@@ -939,6 +959,10 @@
             init() {
                 UI.setView('prejoin');
                 WebRTC.initPreview();
+                
+                // Display accurate details inside PreJoin action card
+                document.getElementById('prejoin-disp-id').textContent = AppState.activeMeeting.id || "---";
+                document.getElementById('prejoin-disp-pass').textContent = AppState.activeMeeting.passcode || "No Passcode Set";
             },
             changeFilter(value) {
                 AppState.webrtc.filterType = value;
@@ -951,7 +975,7 @@
                 } else {
                     canvas.classList.remove('hidden');
                     video.classList.add('hidden');
-                    Prejoin.applyCanvasFilterLoop(video, canvas);
+                    PreJoin.applyCanvasFilterLoop(video, canvas);
                 }
             },
             applyCanvasFilterLoop(video, canvas) {
@@ -983,9 +1007,7 @@
                             data[i+2] = brightness;
                         }
                     } else if (AppState.webrtc.filterType === 'chromakey') {
-                        // Virtual chroma backdrop replacement simulation (Teal background)
                         for (let i = 0; i < data.length; i += 4) {
-                            // Detect skin/dark background regions and tint to teal blue
                             if (data[i] < 90 && data[i+1] < 90) {
                                 data[i] = 19;     // R
                                 data[i+1] = 78;    // G
@@ -1009,7 +1031,7 @@
                 if (video.readyState >= 2) process();
             },
             join() {
-                // Check Passcode Requirement if guest or normal attendee
+                // If the user is joining a meeting (not the host) and a passcode is set, verify it first
                 if(!AppState.activeMeeting.isHost && AppState.activeMeeting.passcode) {
                     UI.openModal('passcode-modal');
                 } else {
@@ -1017,7 +1039,7 @@
                 }
             },
             launchDirect() {
-                // If Lobby is active, trigger Lobby simulation
+                // Lobby validation if guest
                 if(!AppState.activeMeeting.isHost && AppState.activeMeeting.waitingRoom) {
                     UI.showToast("Entering host waiting room. Please stand by...", "success");
                     setTimeout(() => {
@@ -1129,7 +1151,6 @@
                 }
             },
             async toggleScreenShare() {
-                // Host permission lock validation
                 if(!AppState.activeMeeting.isHost && !AppState.activeMeeting.sharePrivilege) {
                     UI.showToast("Host restricted participant screen sharing.", "error");
                     return;
@@ -1146,7 +1167,6 @@
                         document.getElementById('meeting-share-btn').classList.add('bg-green-600', 'text-white');
                         UI.showToast("Sharing your screen...");
                         
-                        // Create shared block in display
                         Meeting.createParticipantCard('screen-owner', 'Your Screen Feed', AppState.user.color, true, stream);
                         
                         stream.getVideoTracks()[0].onended = () => {
@@ -1167,7 +1187,6 @@
                 if(el) el.remove();
                 Meeting.recalculateLayoutGrid();
             },
-            // Custom Feature 13: Picture in Picture API Toggle
             async togglePiP() {
                 const video = document.getElementById('meeting-local-video');
                 if(!video) return;
@@ -1181,7 +1200,7 @@
                         AppState.webrtc.pipActive = true;
                     }
                 } catch (e) {
-                    UI.showToast("PiP mode unsupported or blocked by browser device settings.", "error");
+                    UI.showToast("PiP mode unsupported on this device.", "error");
                 }
             },
             stopAllTracks() {
@@ -1192,7 +1211,7 @@
             }
         };
 
-        // Core Meeting Operations and Multi-Grid Layout Adjustments
+        // Core Meeting Operations
         const Meeting = {
             viewMode: 'grid',
             speechEngine: null,
@@ -1206,13 +1225,9 @@
                 AppState.activeMeeting.startTime = Date.now();
                 this.runTimer();
                 
-                // Set lock state defaults
                 AppState.activeMeeting.locked = false;
                 
-                // Add simulated participant cards (Ensure "all seen in one display" requirement is met)
                 this.populateSimulatedGuests();
-                
-                // Trigger Active speaker simulator Loop
                 this.runActiveSpeakerSimulation();
                 
                 Sidebar.updateCounts();
@@ -1227,7 +1242,7 @@
             },
             populateSimulatedGuests() {
                 AppState.activeMeeting.participants = [];
-                const limit = Math.floor(Math.random() * 3) + 2; // Add 2 to 4 mock users dynamically to fill screen
+                const limit = Math.floor(Math.random() * 3) + 2;
                 
                 for(let i=0; i<limit; i++) {
                     const userObj = {
@@ -1256,7 +1271,6 @@
                     video.className = "w-full h-full object-contain bg-black";
                     card.appendChild(video);
                 } else {
-                    // Create simulated participant face bubble placeholder
                     card.innerHTML = `
                         <div class="absolute inset-0 bg-slate-900 flex items-center justify-center">
                             <div class="w-20 h-20 rounded-full ${color} flex items-center justify-center text-3xl font-extrabold text-white shadow-xl animate-pulse">
@@ -1276,13 +1290,11 @@
                 grid.appendChild(card);
                 this.recalculateLayoutGrid();
             },
-            // Perfect responsive layout math adjusting to viewport dimensions
             recalculateLayoutGrid() {
                 const grid = document.getElementById('meeting-grid');
                 const cards = grid.children;
                 const count = cards.length;
                 
-                // Adjust layout based on card counts
                 if (count === 1) {
                     grid.className = "flex-1 p-6 pb-24 grid grid-cols-1 max-w-4xl mx-auto items-center justify-center content-center gap-4";
                 } else if (count === 2) {
@@ -1312,7 +1324,6 @@
                     Whiteboard.init();
                 }
             },
-            // Custom Feature 4: Live CC via Web Speech SpeechRecognition API
             toggleCaptions() {
                 AppState.webrtc.captionsActive = !AppState.webrtc.captionsActive;
                 const btn = document.getElementById('meeting-cc-btn');
@@ -1353,18 +1364,15 @@
                 
                 this.speechEngine.start();
             },
-            // Custom Feature 14: Active Speaker Detection Simulator
             runActiveSpeakerSimulation() {
                 setInterval(() => {
                     if (AppState.currentView !== 'meeting') return;
                     
-                    // Pick a random participant or local user
                     const participants = AppState.activeMeeting.participants;
                     if(participants.length === 0) return;
                     
                     const index = Math.floor(Math.random() * (participants.length + 1));
                     
-                    // Reset all glows
                     document.querySelectorAll('#meeting-grid > div').forEach(card => {
                         card.classList.remove('speaking-glow');
                     });
@@ -1373,7 +1381,6 @@
                     const label = document.getElementById('active-speaker-name');
                     
                     if(index === participants.length) {
-                        // Local is speaking
                         if(AppState.webrtc.micEnabled) {
                             document.getElementById('card-local').classList.add('speaking-glow');
                             badge.classList.remove('hidden');
@@ -1382,7 +1389,6 @@
                             badge.classList.add('hidden');
                         }
                     } else {
-                        // Guest is speaking
                         const p = participants[index];
                         const card = document.getElementById(`card-${p.id}`);
                         if(card) card.classList.add('speaking-glow');
@@ -1408,7 +1414,6 @@
                     UI.showToast("Recording file saved.");
                 }
             },
-            // Custom Feature 9: Diagnostic Analytics HUD
             toggleDiagnostics() {
                 const el = document.getElementById('diagnostics-hud');
                 el.classList.toggle('hidden');
@@ -1420,7 +1425,6 @@
                     }, 2000);
                 }
             },
-            // Secure Passcode URL Creator
             copyDirectLink() {
                 const domain = window.location.origin + window.location.pathname;
                 const link = `${domain}?joinId=${AppState.activeMeeting.id}&pwd=${AppState.activeMeeting.passcode}`;
@@ -1436,7 +1440,6 @@
                 
                 setTimeout(() => el.remove(), 2500);
             },
-            // Custom Feature 8: Hand Raise Queue Management
             raiseHand() {
                 AppState.activeMeeting.handRaised = !AppState.activeMeeting.handRaised;
                 this.triggerEmoji("✋");
@@ -1470,7 +1473,6 @@
             terminate() {
                 clearInterval(AppState.activeMeeting.timerToken);
                 
-                // Add to history list
                 const elapsed = document.getElementById('meeting-timer').textContent;
                 let history = JSON.parse(localStorage.getItem('session_history') || '[]');
                 history.unshift({
@@ -1480,7 +1482,6 @@
                 });
                 localStorage.setItem('session_history', JSON.stringify(history));
 
-                // Reset grid back to clean layout
                 document.getElementById('meeting-grid').innerHTML = `
                     <div id="card-local" class="relative rounded-2xl overflow-hidden bg-slate-900 border border-darkBorder aspect-video w-full flex items-center justify-center shadow-xl transition-all duration-300">
                         <video id="meeting-local-video" autoplay muted playsinline class="w-full h-full object-cover mirror"></video>
@@ -1500,7 +1501,7 @@
             }
         };
 
-        // Host Central Restriction Panel Controller (Feature 1)
+        // Host Central Restriction Panel Controller
         const Host = {
             toggleRoomLock() {
                 AppState.activeMeeting.locked = !AppState.activeMeeting.locked;
@@ -1521,7 +1522,7 @@
             }
         };
 
-        // Breakout Rooms Controller (Feature 6)
+        // Breakout Rooms Controller
         const Breakout = {
             timerToken: null,
             start() {
@@ -1576,7 +1577,6 @@
                 document.querySelectorAll('#meeting-sidebar > div[id^="tab-panel"]').forEach(el => el.classList.add('hidden'));
                 document.getElementById(`tab-panel-${tab}`).classList.remove('hidden');
                 
-                // Color tabs
                 document.querySelectorAll('#meeting-sidebar button[id^="btn-tab"]').forEach(btn => {
                     btn.className = "px-2.5 py-1 text-xs font-bold rounded-lg text-slate-400";
                 });
@@ -1590,7 +1590,6 @@
                 const container = document.getElementById('people-scroller');
                 container.innerHTML = '';
                 
-                // You Row
                 const selfRow = document.createElement('div');
                 selfRow.className = "flex items-center justify-between p-2.5 bg-slate-950/50 rounded-xl border border-darkBorder";
                 selfRow.innerHTML = `
@@ -1601,7 +1600,6 @@
                 `;
                 container.appendChild(selfRow);
                 
-                // Others Row
                 AppState.activeMeeting.participants.forEach(p => {
                     const row = document.createElement('div');
                     row.className = "flex items-center justify-between p-2.5 bg-slate-900/40 rounded-xl border border-darkBorder text-xs";
@@ -1638,7 +1636,6 @@
                 this.append(message);
                 input.value = '';
                 
-                // Simulator auto response loop
                 setTimeout(() => {
                     if(AppState.activeMeeting.participants.length > 0) {
                         const randomUser = AppState.activeMeeting.participants[0];
@@ -1674,7 +1671,7 @@
             }
         };
 
-        // Collaborative Notepad System (Feature 11)
+        // Collaborative Notepad System
         const Notes = {
             export() {
                 const val = document.getElementById('notes-textarea').value;
@@ -1692,7 +1689,7 @@
             }
         };
 
-        // Interactive Polls System (Feature 5)
+        // Interactive Polls System
         const Polls = {
             options: { A: 0, B: 0 },
             initiatePoll() {
@@ -1735,7 +1732,7 @@
             }
         };
 
-        // File Sharing Panel Sim (Feature 12)
+        // File Sharing Panel Sim
         const Files = {
             simulateUpload(e) {
                 const file = e.target.files[0];
@@ -1769,7 +1766,7 @@
             }
         };
 
-        // Virtual soundboard chimes (Feature 7)
+        // Virtual soundboard chimes
         const Soundboard = {
             play(sfx) {
                 UI.showToast(`Sound effect triggered: ${sfx.toUpperCase()}`);
@@ -1786,7 +1783,6 @@
                     osc.start();
                     osc.stop(audioContext.currentTime + 0.35);
                 } else if (sfx === 'applause') {
-                    // Simulate high-pitched applause clap sound
                     osc.type = 'triangle';
                     osc.frequency.setValueAtTime(120, audioContext.currentTime);
                     gain.gain.setValueAtTime(0.2, audioContext.currentTime);
@@ -1801,7 +1797,7 @@
             }
         };
 
-        // Interactive Whiteboard Canvas Model (Feature 11 extra)
+        // Interactive Whiteboard Canvas Model
         const Whiteboard = {
             canvas: null,
             ctx: null,
@@ -1823,7 +1819,6 @@
                 // Touch events
                 this.canvas.addEventListener('touchstart', (e) => {
                     const t = e.touches[0];
-                    const rect = this.canvas.getBoundingClientRect();
                     this.startDraw({ clientX: t.clientX, clientY: t.clientY });
                 });
                 this.canvas.addEventListener('touchmove', (e) => {
@@ -1889,4 +1884,3 @@
     </script>
 </body>
 </html>
-
