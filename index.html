@@ -1,1886 +1,554 @@
+
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MeetFlow Pro - Video Conferencing Hub</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>For Dad — A Father's Day Card</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Lora:ital,wght@0,400;0,500;1,400&family=Great+Vibes&display=swap');
+
+  :root {
+    --paper: #fdfbf7;
+    --paper-dark: #f0ebe1;
+    --ink: #1e293b;
+    --ink-light: #334155;
+    --cover-main: #0f172a;      
+    --cover-dark: #020617;      
+    --gold: #d4af37;            
+    --gold-light: #f3e5ab;      
+  }
+
+  * { 
+    box-sizing: border-box; 
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    margin: 0;
+    width: 100vw;
+    /* Uses dynamic viewport height for mobile browsers, falls back to 100vh */
+    min-height: 100vh;
+    min-height: 100dvh; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at center, #1e293b 0%, #020617 100%);
+    font-family: 'Lora', serif;
+    color: var(--ink);
+    padding: 20px;
+    overflow: hidden; /* Prevents page scrolling, keeps card centered */
+  }
+
+  /* ---------- BULLETPROOF RESPONSIVE SIZING ---------- */
+  .scene {
+    position: relative;
+    /* Base Mobile Sizing */
+    width: 90vw;
+    height: 126vw; /* 1.4 aspect ratio of 90vw */
     
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#2563eb',
-                        primaryHover: '#1d4ed8',
-                        darkBg: '#090d16',
-                        darkPanel: '#131926',
-                        darkBorder: '#1f293d'
-                    }
-                }
-            }
-        }
-    </script>
+    /* Max Desktop Sizing */
+    max-width: 400px;
+    max-height: 560px;
+    
+    perspective: 2500px;
+    -webkit-perspective: 2500px;
+    margin: 0 auto;
+    z-index: 10;
+  }
 
-    <!-- Google Fonts & Phosphor Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  /* Lock to max dimensions on larger screens (PCs) */
+  @media (min-width: 445px) {
+    .scene {
+      width: 400px;
+      height: 560px;
+    }
+  }
 
-    <style>
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
-        .mono {
-            font-family: 'JetBrains Mono', monospace;
-        }
-        /* Custom scrollbar */
-        ::-webkit-scrollbar { width: 5px; height: 5px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 99px; }
-        .dark ::-webkit-scrollbar-thumb { background: #1e293b; }
-        
-        .video-box-glow {
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
-            border-color: #3b82f6 !important;
-        }
-        
-        .speaking-glow {
-            animation: speakPulse 1.5s infinite alternate;
-        }
+  /* Shrink appropriately on very short screens (Landscape Mobile/TVs) */
+  @media (max-height: 660px) {
+    .scene {
+      height: 85vh;
+      width: calc(85vh * 0.714); /* 1 / 1.4 aspect ratio */
+      max-width: 90vw;
+    }
+  }
 
-        @keyframes speakPulse {
-            0% { box-shadow: 0 0 4px #22c55e; border-color: #22c55e; }
-            100% { box-shadow: 0 0 16px #22c55e; border-color: #4ade80; }
-        }
+  /* Scale up elegantly for massive screens (4K TVs) */
+  @media (min-width: 1500px) and (min-height: 900px) {
+    .scene {
+      max-width: 500px;
+      max-height: 700px;
+      width: 500px;
+      height: 700px;
+    }
+  }
 
-        .caption-text {
-            text-shadow: 0px 2px 4px rgba(0,0,0,0.9);
-        }
-    </style>
+  /* ---------- COVER ---------- */
+  .cover {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border-radius: 8px;
+    background: 
+      linear-gradient(135deg, rgba(255,255,255,0.05), transparent 50%),
+      linear-gradient(160deg, var(--cover-main), var(--cover-dark));
+    box-shadow: 
+      0 20px 40px -10px rgba(0,0,0,0.8),
+      inset 0 0 0 1px rgba(255,255,255,0.1);
+    transform-origin: left center;
+    -webkit-transform-origin: left center;
+    transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
+    transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+    cursor: pointer;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  .scene.open .cover {
+    transform: rotateY(-160deg);
+    -webkit-transform: rotateY(-160deg);
+    cursor: default;
+    pointer-events: none;
+    box-shadow: 0 20px 40px -10px rgba(0,0,0,0.2);
+  }
+
+  .cover::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border-radius: 8px;
+    background-image: 
+      repeating-linear-gradient(45deg, rgba(255,255,255,0.015) 0 2px, transparent 2px 4px),
+      repeating-linear-gradient(-45deg, rgba(0,0,0,0.02) 0 2px, transparent 2px 4px);
+    opacity: 0.8;
+  }
+
+  .cover-inner {
+    position: absolute;
+    top: 16px; left: 16px; right: 16px; bottom: 16px;
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.02), transparent);
+  }
+
+  .emblem {
+    width: 25%;
+    max-width: 80px;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle, rgba(212, 175, 55, 0.15), transparent 70%);
+    margin-bottom: 20px;
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
+  }
+  
+  .emblem svg { width: 50%; height: 50%; fill: none; stroke: var(--gold-light); stroke-width: 1.5; }
+
+  .cover h1 {
+    margin: 0;
+    font-family: 'Cinzel', serif;
+    font-size: 2rem;
+    font-size: clamp(1.4rem, 6vw, 2.2rem);
+    letter-spacing: 0.08em;
+    color: var(--gold-light);
+    text-transform: uppercase;
+    line-height: 1.3;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  }
+
+  .cover .sub {
+    margin-top: 12px;
+    color: rgba(243, 229, 171, 0.7);
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .tap-hint {
+    position: absolute;
+    bottom: 20px;
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse { 0%, 100% { opacity: 0.3; transform: translateY(0); } 50% { opacity: 0.9; transform: translateY(-3px); } }
+
+  /* ---------- INSIDE PAGES ---------- */
+  .pages {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--paper), var(--paper-dark));
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05), 0 20px 40px -10px rgba(0,0,0,0.6);
+    display: flex;
+    flex-direction: column;
+    padding: 8% 6%;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  .pages::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    opacity: 0.4;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    pointer-events: none;
+    mix-blend-mode: multiply;
+  }
+
+  .frame {
+    position: relative;
+    margin: 0 auto 15px;
+    width: 85%;
+    height: 42%;
+    background: #fff;
+    padding: 3%;
+    padding-bottom: 8%;
+    box-shadow: 0 10px 20px -5px rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.03);
+    transform: rotate(-2deg);
+    transition: transform 0.3s ease;
+    z-index: 2;
+  }
+
+  .frame .tape {
+    position: absolute;
+    top: -10px; 
+    left: 50%;
+    transform: translateX(-50%) rotate(-3deg);
+    width: 60px; 
+    height: 20px;
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(2px);
+    border: 1px solid rgba(0,0,0,0.05);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  }
+
+  .photo-slot {
+    width: 100%; 
+    height: 100%;
+    overflow: hidden;
+    background: #e2e8f0;
+    border: 1px solid rgba(0,0,0,0.05);
+  }
+
+  .photo-slot img {
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+    display: block;
+    filter: sepia(0.2) contrast(1.1);
+  }
+
+  .message {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    z-index: 2;
+    padding: 0 10px;
+    overflow-y: auto; /* Fallback for very squished screens */
+  }
+
+  .message .greeting {
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    font-size: clamp(1rem, 4vw, 1.3rem);
+    color: var(--cover-main);
+    margin: 0 0 12px 0;
+    font-weight: 700;
+  }
+
+  .message .body-text {
+    font-size: 0.9rem;
+    font-size: clamp(0.75rem, 3vw, 0.95rem);
+    line-height: 1.6;
+    color: var(--ink-light);
+    margin: 0;
+  }
+
+  .message .body-text p { margin: 0 0 8px 0; }
+  .message .body-text p:last-child { margin-bottom: 0; }
+
+  .signoff {
+    margin-top: 15px;
+    font-family: 'Great Vibes', cursive;
+    font-size: 2rem;
+    font-size: clamp(1.6rem, 6vw, 2.4rem);
+    color: var(--cover-main);
+    transform: rotate(-2deg);
+  }
+
+  /* ---------- MUSIC CONTROL ---------- */
+  .music-bar {
+    position: absolute;
+    bottom: -70px; 
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(15, 23, 42, 0.9);
+    padding: 8px 16px;
+    border-radius: 30px;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    z-index: 6;
+    opacity: 0;
+    transition: opacity 0.8s ease 0.5s, transform 0.8s ease 0.5s;
+    pointer-events: none;
+  }
+
+  .scene.open .music-bar { 
+    opacity: 1; 
+    transform: translateX(-50%) translateY(-20px);
+    pointer-events: auto;
+  }
+
+  .music-toggle {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold));
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  }
+
+  .music-toggle svg { width: 14px; height: 14px; fill: var(--cover-dark); }
+
+  .music-info { display: flex; flex-direction: column; align-items: flex-start; }
+
+  .music-label {
+    font-size: 0.75rem;
+    color: #fff;
+    font-family: 'Lora', serif;
+    letter-spacing: 0.05em;
+  }
+
+  .bars { display: flex; align-items: flex-end; gap: 3px; height: 10px; margin-top: 4px; }
+  .bars span {
+    width: 2px; background: var(--gold-light); border-radius: 1px; height: 3px;
+    animation: bar 1s ease-in-out infinite;
+  }
+  .bars span:nth-child(1) { animation-delay: 0.0s; }
+  .bars span:nth-child(2) { animation-delay: 0.2s; }
+  .bars span:nth-child(3) { animation-delay: 0.4s; }
+  .bars span:nth-child(4) { animation-delay: 0.6s; }
+  
+  .scene:not(.playing) .bars span { animation-play-state: paused; height: 3px !important; }
+  @keyframes bar { 0%, 100% { height: 3px; } 50% { height: 10px; } }
+
+  /* floating particles */
+  .glow {
+    position: absolute;
+    top: -50px; bottom: -50px; left: -50px; right: -50px;
+    pointer-events: none; z-index: 0; opacity: 0;
+    transition: opacity 1.5s ease;
+  }
+  .scene.open .glow { opacity: 1; }
+  
+  .glow span {
+    position: absolute;
+    width: 4px; height: 4px;
+    background: var(--gold-light);
+    border-radius: 50%;
+    opacity: 0;
+    box-shadow: 0 0 10px var(--gold);
+    animation: rise 6s linear infinite;
+  }
+
+  @keyframes rise {
+    0% { opacity: 0; transform: translateY(0) scale(0.5); }
+    20% { opacity: 0.6; }
+    80% { opacity: 0.6; }
+    100% { opacity: 0; transform: translateY(-400px) scale(1.2); }
+  }
+
+  footer {
+    position: fixed;
+    bottom: 10px; left: 0; right: 0;
+    text-align: center;
+    font-size: 0.65rem;
+    color: rgba(255,255,255,0.2);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    pointer-events: none;
+  }
+  
+  .photo-only {
+  position: relative;
+  width: 90%;
+  height: 80%;
+  margin: auto;
+  background: #fff;
+  padding: 15px;
+  box-shadow:
+    0 15px 30px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  transform: rotate(-2deg);
+}
+
+.photo-only img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.photo-only .tape {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(3px);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+</style>
 </head>
-<body class="bg-slate-900 text-slate-100 h-screen w-screen flex flex-col overflow-hidden transition-colors duration-300">
+<body>
 
-    <!-- Global Toast Container -->
-    <div id="toast-container" class="fixed top-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+<div class="scene" id="scene">
+  <div class="glow" id="glow"></div>
 
-    <!-- Modals & Overlays -->
-    <div id="modal-overlay" class="fixed inset-0 bg-black/70 backdrop-blur-md z-40 hidden flex items-center justify-center p-4">
-        
-        <!-- Passcode Required Modal -->
-        <div id="passcode-modal" class="bg-darkPanel rounded-2xl w-full max-w-sm border border-darkBorder p-6 hidden flex-col shadow-2xl">
-            <h3 class="text-xl font-bold mb-2 flex items-center gap-2 text-yellow-500">
-                <i class="ph ph-lock-key text-2xl"></i> Security Verification
-            </h3>
-            <p class="text-slate-400 text-sm mb-4">A password is required to join this secure meeting room.</p>
-            <input type="text" id="input-verify-passcode" placeholder="Enter 6-digit passcode" class="w-full bg-slate-950 border border-darkBorder rounded-xl px-4 py-3 outline-none text-center tracking-widest text-lg font-bold mb-4">
-            <div class="flex gap-3">
-                <button onclick="UI.closeModals()" class="flex-1 bg-slate-800 hover:bg-slate-700 py-2.5 rounded-xl font-medium transition">Cancel</button>
-                <button onclick="Dashboard.verifyPasscodeAndJoin()" class="flex-1 bg-primary hover:bg-primaryHover py-2.5 rounded-xl font-medium transition">Join Room</button>
-            </div>
-        </div>
-
-        <!-- Create/Start Meeting Modal with details -->
-        <div id="start-meeting-modal" class="bg-darkPanel rounded-3xl w-full max-w-md border border-darkBorder p-6 hidden flex-col shadow-2xl">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold flex items-center gap-2"><i class="ph ph-video-camera text-primary"></i> Instant Meeting Setup</h3>
-                <button onclick="UI.closeModals()" class="text-slate-400 hover:text-white"><i class="ph ph-x text-xl"></i></button>
-            </div>
-            <div class="space-y-4 mb-6">
-                <div class="bg-slate-950 p-4 rounded-2xl border border-darkBorder">
-                    <label class="text-xs text-slate-500 font-bold tracking-wider block mb-1">ROOM ID</label>
-                    <span id="new-room-id" class="text-lg font-bold mono select-all">123-456-789</span>
-                </div>
-                <div class="bg-slate-950 p-4 rounded-2xl border border-darkBorder">
-                    <label class="text-xs text-slate-500 font-bold tracking-wider block mb-1">ROOM PASSCODE</label>
-                    <span id="new-room-passcode" class="text-lg font-bold tracking-wider text-green-400 mono select-all">654321</span>
-                </div>
-                <div class="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-4 text-xs text-blue-300 leading-relaxed">
-                    <i class="ph ph-info mr-1.5 align-middle"></i> Only users holding this secure passcode or joining through the complete URL invite link will be authorized to access the space.
-                </div>
-            </div>
-            <button onclick="Dashboard.confirmAndLaunchMeeting()" class="w-full bg-primary hover:bg-primaryHover py-3 rounded-2xl font-semibold text-lg transition shadow-lg shadow-blue-500/20">
-                Launch Secure Room
-            </button>
-        </div>
-
-        <!-- Lobby Waiting Room Modal for Host -->
-        <div id="lobby-modal" class="bg-darkPanel rounded-3xl w-full max-w-sm border border-darkBorder p-6 hidden flex-col shadow-2xl">
-            <div class="text-center mb-4">
-                <div class="w-16 h-16 bg-yellow-500/10 text-yellow-500 rounded-full flex items-center justify-center text-3xl mx-auto mb-2 animate-bounce">
-                    <i class="ph ph-door-open"></i>
-                </div>
-                <h3 class="text-lg font-bold">Lobby Request</h3>
-                <p id="lobby-request-text" class="text-slate-400 text-sm mt-1">Someone wants to enter the room.</p>
-            </div>
-            <div class="flex gap-3">
-                <button onclick="Lobby.reject()" class="flex-1 bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500/20 py-2.5 rounded-xl font-medium transition">Decline</button>
-                <button onclick="Lobby.admit()" class="flex-1 bg-green-500 text-white hover:bg-green-600 py-2.5 rounded-xl font-medium transition shadow-lg shadow-green-500/20">Admit Entry</button>
-            </div>
-        </div>
-
-        <!-- Schedule Meeting Modal -->
-        <div id="schedule-modal" class="bg-darkPanel rounded-3xl w-full max-w-md border border-darkBorder p-6 hidden flex-col shadow-2xl">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold flex items-center gap-2"><i class="ph ph-calendar-plus text-primary"></i> Schedule Secure Meeting</h3>
-                <button onclick="UI.closeModals()" class="text-slate-400 hover:text-white"><i class="ph ph-x text-xl"></i></button>
-            </div>
-            <div class="space-y-4 mb-6">
-                <div>
-                    <label class="block text-xs text-slate-400 font-bold mb-1">MEETING SUBJECT</label>
-                    <input type="text" id="sch-subject" value="Strategic Planning Sync" class="w-full bg-slate-950 border border-darkBorder rounded-xl px-4 py-2.5 outline-none focus:ring-1 focus:ring-primary">
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs text-slate-400 font-bold mb-1">DATE</label>
-                        <input type="date" id="sch-date" class="w-full bg-slate-950 border border-darkBorder rounded-xl px-4 py-2.5 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-400 font-bold mb-1">TIME</label>
-                        <input type="time" id="sch-time" class="w-full bg-slate-950 border border-darkBorder rounded-xl px-4 py-2.5 outline-none">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs text-slate-400 font-bold mb-1">OPTIONS</label>
-                    <div class="flex items-center gap-2 mt-2">
-                        <input type="checkbox" id="sch-waiting-room" checked class="w-4 h-4 rounded accent-primary">
-                        <span class="text-sm text-slate-300">Enable Waiting Room (Lobby)</span>
-                    </div>
-                </div>
-            </div>
-            <button onclick="Dashboard.completeScheduling()" class="w-full bg-primary hover:bg-primaryHover py-3 rounded-2xl font-semibold transition">
-                Schedule & Generate Invitation
-            </button>
-        </div>
-
+  <!-- INSIDE PAGES -->
+  <div class="pages">
+    <div class="frame">
+      <div class="tape"></div>
+      <div class="photo-slot">
+        <!-- REPLACE THIS IMAGE URL WITH YOUR DAD'S PHOTO -->
+        <img id="photoImg" src="https://i.ibb.co/Pvj4Hksh/IMG-20260620-WA0018.jpg" alt="Dad and me">
+      </div>
     </div>
 
-    <!-- ==================== AUTHENTICATION SECTION ==================== -->
-    <section id="view-auth" class="flex-1 flex items-center justify-center p-6 relative overflow-hidden bg-slate-950">
-        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/30 via-slate-950 to-slate-950"></div>
-        
-        <div class="bg-darkPanel/80 backdrop-blur-xl p-8 rounded-3xl border border-darkBorder w-full max-w-md shadow-2xl z-10 relative">
-            <div class="flex items-center justify-center gap-3 mb-8">
-                <div class="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center text-white shadow-xl shadow-blue-500/30">
-                    <i class="ph-fill ph-video-camera text-2xl"></i>
-                </div>
-                <h1 class="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-blue-400 to-indigo-300 bg-clip-text text-transparent">MeetFlow Pro</h1>
-            </div>
+    <div class="message">
+      <h2 class="greeting">Happy Father's Day</h2>
+      <div class="body-text">
+        <p>Thank you for being my steady anchor in the storm and my true north when I need guidance.</p>
+        <p>Your quiet strength, endless patience, and unwavering support have shaped exactly who I am today.</p>
+      </div>
+      <div class="signoff">With all my love</div>
+    </div>
+  </div>
+
+  <!-- COVER -->
+  <div class="cover" id="cover" role="button" tabindex="0">
+    <div class="cover-inner">
+      <div class="emblem">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <h1>Happy<br>Father's Day</h1>
+      <div class="sub">To the man we look up to</div>
+      <div class="tap-hint">Tap to Open</div>
+    </div>
+  </div>
+
+  <!-- MUSIC BAR -->
+  <div class="music-bar">
+    <button class="music-toggle" id="musicToggle" aria-label="Play music">
+      <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+    </button>
+    <div class="music-info">
+      <div class="music-label">A Song for Dad</div>
+      <div class="bars" id="bars"><span></span><span></span><span></span><span></span></div>
+    </div>
+  </div>
+</div>
+
+<footer>Created with love</footer>
+
+<!-- REPLACE THIS URL WITH YOUR CUSTOM MP3/M4A FILE -->
+<audio id="audioEl" src="/papa.mp3" loop preload="auto"></audio>
+
+<script>
+  const scene = document.getElementById('scene');
+  const cover = document.getElementById('cover');
+  const glow = document.getElementById('glow');
+  const audioEl = document.getElementById('audioEl');
+  const musicToggle = document.getElementById('musicToggle');
+  const playIcon = document.getElementById('playIcon');
+
+  const PAUSE_PATH = '<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
+  const PLAY_PATH  = '<path d="M8 5v14l11-7z"/>';
+
+  // Build floating magical particles
+  for(let i = 0; i < 20; i++){
+    const s = document.createElement('span');
+    s.style.left = (Math.random() * 100) + '%';
+    s.style.bottom = (Math.random() * 20) + 'px';
+    s.style.animationDelay = (Math.random() * 6) + 's';
+    s.style.animationDuration = (5 + Math.random() * 4) + 's';
+    glow.appendChild(s);
+  }
+
+  // Robust function to handle opening
+  function openCard() {
+    if(!scene.classList.contains('open')){
+      scene.classList.add('open');
+      
+      // Auto-play music attempt (with robust error catching for strict mobile browsers)
+      if(audioEl.src){
+        try {
+          const playPromise = audioEl.play();
+          if (playPromise !== undefined) {
+            playPromise.then(() => {
+              scene.classList.add('playing');
+              playIcon.innerHTML = PAUSE_PATH;
+            }).catch(error => {
+              console.log("Browser prevented autoplay. User must click the play button manually.", error);
+            });
+          }
+        } catch (err) {
+           console.log("Audio play error", err);
+        }
+      }
+    }
+  }
+
+  // Support both Click and Touch/Keyboard events securely
+  cover.addEventListener('click', openCard);
+  cover.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { openCard(); }
+  });
+
+  // Handle Manual Music Toggle
+  musicToggle.addEventListener('click', (e) => {
+    e.stopPropagation(); // prevent bubbling
+    if(audioEl.paused){
+      audioEl.play();
+      scene.classList.add('playing');
+      playIcon.innerHTML = PAUSE_PATH;
+    } else {
+      audioEl.pause();
+      scene.classList.remove('playing');
+      playIcon.innerHTML = PLAY_PATH;
+    }
+  });
+</script>
 
-            <!-- Custom Tab Toggle -->
-            <div class="flex bg-slate-950 rounded-xl p-1 mb-6 border border-darkBorder">
-                <button onclick="Auth.switchTab('login')" id="tab-login" class="flex-1 py-2 text-sm font-semibold rounded-lg bg-darkPanel text-white shadow transition">Account Login</button>
-                <button onclick="Auth.switchTab('guest')" id="tab-guest" class="flex-1 py-2 text-sm font-semibold rounded-lg text-slate-400 hover:text-white transition">Fast Guest Join</button>
-            </div>
-
-            <form id="form-login" onsubmit="Auth.handleLogin(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-400 mb-1">EMAIL ADDRESS</label>
-                    <input type="email" id="login-email" required placeholder="manager@company.com" class="w-full bg-slate-950 border border-darkBorder rounded-xl px-4 py-3 outline-none focus:ring-1 focus:ring-primary transition text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-400 mb-1">PASSWORD</label>
-                    <input type="password" id="login-pwd" required placeholder="••••••••" class="w-full bg-slate-950 border border-darkBorder rounded-xl px-4 py-3 outline-none focus:ring-1 focus:ring-primary transition text-sm">
-                </div>
-                <button type="submit" class="w-full bg-primary hover:bg-primaryHover text-white py-3 rounded-xl font-bold transition shadow-lg shadow-blue-500/20">Sign In to Dashboard</button>
-            </form>
-
-            <form id="form-guest" onsubmit="Auth.handleGuest(event)" class="space-y-4 hidden">
-                <div>
-                    <label class="block text-xs font-bold text-slate-400 mb-1">YOUR DISPLAY NAME</label>
-                    <input type="text" id="guest-name" required placeholder="Alex Mercer" class="w-full bg-slate-950 border border-darkBorder rounded-xl px-4 py-3 outline-none focus:ring-1 focus:ring-primary transition text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-400 mb-1">TARGET MEETING ID (OPTIONAL)</label>
-                    <input type="text" id="guest-meeting-id" placeholder="123-456-789" class="w-full bg-slate-950 border border-darkBorder rounded-xl px-4 py-3 outline-none focus:ring-1 focus:ring-primary transition text-sm">
-                </div>
-                <button type="submit" class="w-full bg-slate-100 hover:bg-white text-slate-950 py-3 rounded-xl font-bold transition">Instant Guest Launch</button>
-            </form>
-        </div>
-    </section>
-
-    <!-- ==================== DASHBOARD SECTION ==================== -->
-    <section id="view-dashboard" class="flex-1 hidden flex-col bg-slate-950">
-        <!-- Dashboard Top Nav -->
-        <header class="h-16 border-b border-darkBorder bg-darkPanel px-6 flex items-center justify-between z-10">
-            <div class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white"><i class="ph-fill ph-video-camera text-lg"></i></div>
-                <h1 class="text-xl font-black bg-gradient-to-r from-blue-400 to-indigo-300 bg-clip-text text-transparent">MeetFlow</h1>
-            </div>
-            <div class="flex items-center gap-4">
-                <span id="dash-user-label" class="text-sm font-semibold text-slate-300 hidden sm:inline">Hello, User</span>
-                <div id="dash-avatar" class="w-9 h-9 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-500 flex items-center justify-center text-white font-extrabold cursor-pointer text-sm" onclick="Auth.logout()" title="Logout">U</div>
-            </div>
-        </header>
-
-        <!-- Dashboard Content -->
-        <main class="flex-1 overflow-y-auto p-6 flex justify-center items-start">
-            <div class="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-3 gap-6 mt-4">
-                
-                <!-- Action Grid -->
-                <div class="lg:col-span-2 space-y-6">
-                    <div class="grid grid-cols-2 gap-4">
-                        <button onclick="Dashboard.openStartMeeting()" class="bg-primary hover:bg-primaryHover text-white p-6 rounded-3xl flex flex-col items-center justify-center gap-3 transition shadow-lg shadow-blue-500/10 group">
-                            <div class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center group-hover:scale-105 transition-transform"><i class="ph-fill ph-video-camera text-2xl"></i></div>
-                            <span class="font-bold text-base">New Meeting</span>
-                        </button>
-                        
-                        <button onclick="Dashboard.toggleJoinPanel()" class="bg-emerald-600 hover:bg-emerald-700 text-white p-6 rounded-3xl flex flex-col items-center justify-center gap-3 transition shadow-lg shadow-emerald-500/10 group">
-                            <div class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center group-hover:scale-105 transition-transform"><i class="ph-fill ph-plus-circle text-2xl"></i></div>
-                            <span class="font-bold text-base">Join Meeting</span>
-                        </button>
-
-                        <button onclick="UI.openModal('schedule-modal')" class="bg-indigo-600 hover:bg-indigo-700 text-white p-6 rounded-3xl flex flex-col items-center justify-center gap-3 transition shadow-lg shadow-indigo-500/10 group">
-                            <div class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center group-hover:scale-105 transition-transform"><i class="ph-fill ph-calendar text-2xl"></i></div>
-                            <span class="font-bold text-base">Schedule</span>
-                        </button>
-
-                        <button onclick="UI.showToast('Virtual Background settings adjusted successfully.')" class="bg-slate-800 hover:bg-slate-750 text-slate-200 p-6 rounded-3xl flex flex-col items-center justify-center gap-3 transition group border border-darkBorder">
-                            <div class="w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center group-hover:scale-105 transition-transform"><i class="ph ph-palette text-2xl"></i></div>
-                            <span class="font-bold text-base">Media Test</span>
-                        </button>
-                    </div>
-
-                    <!-- Direct ID Access Panel -->
-                    <div id="join-control-panel" class="bg-darkPanel rounded-3xl p-6 border border-darkBorder hidden animate-in slide-in-from-top-4 duration-300">
-                        <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="ph ph-door text-emerald-400"></i> Connect with ID & Passcode</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <label class="text-xs text-slate-400 block mb-1">MEETING ID</label>
-                                <input type="text" id="join-id-input" placeholder="e.g. 123-456-789" class="w-full bg-slate-950 border border-darkBorder rounded-xl px-4 py-2.5 outline-none focus:ring-1 focus:ring-primary">
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400 block mb-1">PASSCODE (OPTIONAL)</label>
-                                <input type="text" id="join-pass-input" placeholder="6-digit password" class="w-full bg-slate-950 border border-darkBorder rounded-xl px-4 py-2.5 outline-none focus:ring-1 focus:ring-primary">
-                            </div>
-                        </div>
-                        <button onclick="Dashboard.initiateManualJoin()" class="w-full bg-emerald-600 hover:bg-emerald-700 py-3 rounded-2xl font-bold transition">Connect to Room</button>
-                    </div>
-                </div>
-
-                <!-- Right Sidebar: Upcoming & History -->
-                <div class="space-y-6">
-                    <!-- Scheduled Meetings List -->
-                    <div class="bg-darkPanel border border-darkBorder rounded-3xl p-6">
-                        <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="ph ph-calendar text-primary"></i> Scheduled Sessions</h3>
-                        <div id="scheduled-container" class="space-y-3 max-h-[220px] overflow-y-auto pr-1">
-                            <!-- Populated dynamically -->
-                            <p class="text-sm text-slate-500 text-center py-4">No scheduled sessions</p>
-                        </div>
-                    </div>
-
-                    <!-- History Tracker -->
-                    <div class="bg-darkPanel border border-darkBorder rounded-3xl p-6">
-                        <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="ph ph-clock-counter-clockwise text-indigo-400"></i> History Log</h3>
-                        <div id="history-container" class="space-y-3 max-h-[200px] overflow-y-auto pr-1">
-                            <!-- Populated dynamically -->
-                            <p class="text-sm text-slate-500 text-center py-4">No previous sessions detected</p>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </main>
-    </section>
-
-    <!-- ==================== PRE-JOIN CHAMBER ==================== -->
-    <section id="view-prejoin" class="flex-1 hidden flex-col items-center justify-center bg-slate-950 p-6">
-        <div class="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
-            
-            <!-- Camera Canvas Preview -->
-            <div class="lg:col-span-2 space-y-4">
-                <div class="relative aspect-video w-full bg-slate-900 rounded-3xl border border-darkBorder overflow-hidden shadow-2xl">
-                    <video id="prejoin-video" autoplay muted playsinline class="w-full h-full object-cover mirror"></video>
-                    <!-- Simulated Canvas with background filters -->
-                    <canvas id="prejoin-filter-canvas" class="absolute inset-0 w-full h-full object-cover hidden"></canvas>
-
-                    <div id="prejoin-avatar-fallback" class="absolute inset-0 bg-slate-900 flex items-center justify-center hidden">
-                        <div id="prejoin-circle" class="w-24 h-24 rounded-full bg-slate-800 flex items-center justify-center text-4xl font-extrabold shadow-lg"></div>
-                    </div>
-
-                    <!-- Bottom Bar Inside Preview -->
-                    <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-3 bg-slate-950/80 backdrop-blur-md border border-darkBorder px-6 py-3 rounded-2xl z-10">
-                        <button onclick="WebRTC.toggleMicPrejoin()" id="pre-mic-btn" class="w-11 h-11 rounded-xl bg-slate-800 hover:bg-slate-750 flex items-center justify-center transition">
-                            <i class="ph-fill ph-microphone text-lg text-white"></i>
-                        </button>
-                        <button onclick="WebRTC.toggleCamPrejoin()" id="pre-cam-btn" class="w-11 h-11 rounded-xl bg-slate-800 hover:bg-slate-750 flex items-center justify-center transition">
-                            <i class="ph-fill ph-video-camera text-lg text-white"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Prejoin Action Panel -->
-            <div class="bg-darkPanel border border-darkBorder rounded-3xl p-6 space-y-6">
-                <div>
-                    <h2 class="text-2xl font-black">Ready to Join?</h2>
-                    <p class="text-xs text-slate-400 mt-1 uppercase tracking-wider">SECURE CONNECTION READY</p>
-                </div>
-
-                <!-- Credential Display to Assist Joining & Testing -->
-                <div class="bg-slate-950 p-4 rounded-2xl border border-darkBorder space-y-2 text-sm">
-                    <div class="flex justify-between">
-                        <span class="text-slate-400">Meeting ID:</span>
-                        <span id="prejoin-disp-id" class="font-bold mono select-all">---</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-slate-400">Passcode:</span>
-                        <span id="prejoin-disp-pass" class="font-bold text-green-400 mono select-all">None</span>
-                    </div>
-                </div>
-
-                <!-- Custom Feature 1: Virtual Background Control -->
-                <div class="space-y-2">
-                    <label class="block text-xs text-slate-400 font-bold tracking-wider">SELECT FILTER / BACKGROUND</label>
-                    <select id="bg-filter-select" onchange="PreJoin.changeFilter(this.value)" class="w-full bg-slate-950 border border-darkBorder text-slate-200 rounded-xl px-4 py-2.5 outline-none focus:ring-1 focus:ring-primary">
-                        <option value="none">None (Standard Video Feed)</option>
-                        <option value="blur">Blur Background (Soft Focus)</option>
-                        <option value="sepia">Vintage Sepia Filter</option>
-                        <option value="grayscale">Noir Black & White</option>
-                        <option value="chromakey">Virtual Green-Screen (Teal Backdrop)</option>
-                    </select>
-                </div>
-
-                <div class="pt-4 border-t border-darkBorder flex flex-col gap-3">
-                    <button onclick="PreJoin.join()" class="w-full bg-primary hover:bg-primaryHover py-3.5 rounded-2xl font-bold text-lg transition shadow-xl shadow-blue-500/20">
-                        Access Meeting Room
-                    </button>
-                    <button onclick="UI.setView('dashboard')" class="w-full bg-slate-800 hover:bg-slate-750 py-3 rounded-2xl text-slate-300 text-sm font-semibold transition">
-                        Back to Dashboard
-                    </button>
-                </div>
-            </div>
-
-        </div>
-    </section>
-
-    <!-- ==================== MAIN MEETING ROOM SECTION ==================== -->
-    <section id="view-meeting" class="flex-1 hidden flex-col bg-slate-950 relative overflow-hidden">
-        
-        <!-- Top Control Status Bar -->
-        <div class="h-14 border-b border-darkBorder bg-slate-950 flex items-center justify-between px-6 z-20 shrink-0">
-            <div class="flex items-center gap-3">
-                <div id="meeting-lock-badge" class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 cursor-pointer" onclick="Host.toggleRoomLock()">
-                    <i class="ph ph-lock-key-open"></i> <span>Unlocked Room</span>
-                </div>
-                <span id="meeting-timer" class="text-xs font-bold text-slate-400 mono bg-slate-900 border border-darkBorder px-2.5 py-1 rounded-lg">00:00</span>
-                <button onclick="Meeting.copyDirectLink()" class="bg-slate-900 hover:bg-slate-800 text-slate-300 border border-darkBorder px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 transition">
-                    <i class="ph ph-share"></i> Copy Invite Link
-                </button>
-            </div>
-            
-            <!-- Real-time Active Speaker & CC Display -->
-            <div id="live-speaker-badge" class="hidden md:flex items-center gap-1.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full text-xs font-bold">
-                <i class="ph-fill ph-waveform"></i> <span id="active-speaker-name">You Speaking</span>
-            </div>
-
-            <div class="flex items-center gap-2">
-                <button onclick="WebRTC.togglePiP()" class="text-slate-400 hover:text-white p-2 rounded-lg transition" title="Picture in Picture"><i class="ph ph-picture-in-picture text-xl"></i></button>
-                <button onclick="Meeting.toggleViewMode()" class="text-slate-400 hover:text-white p-2 rounded-lg transition" title="Layout Mode"><i class="ph ph-grid-four text-xl"></i></button>
-                <button onclick="Meeting.toggleFullScreen()" class="text-slate-400 hover:text-white p-2 rounded-lg transition" title="Toggle Fullscreen"><i class="ph ph-corners-out text-xl"></i></button>
-            </div>
-        </div>
-
-        <!-- Simulated Recording Bar -->
-        <div id="rec-bar" class="hidden absolute top-16 left-6 z-30 bg-red-600/20 border border-red-500/30 text-red-500 px-3.5 py-1.5 rounded-full text-xs font-bold items-center gap-2 backdrop-blur-md animate-pulse">
-            <div class="w-2.5 h-2.5 bg-red-600 rounded-full"></div>
-            <span>RECORDING LIVE</span>
-        </div>
-
-        <!-- Floating Reactions Container -->
-        <div id="reactions-container" class="absolute bottom-24 left-6 z-30 flex flex-col-reverse gap-2 pointer-events-none"></div>
-
-        <!-- Main Video & Shared Board Frame -->
-        <div class="flex-1 flex overflow-hidden relative">
-            
-            <!-- Dynamic Video Matrix Grid (Fits All Together) -->
-            <div id="meeting-grid" class="flex-1 p-6 pb-24 grid gap-4 items-center justify-center content-center transition-all duration-300">
-                
-                <!-- Local Host Card (Always Visible) -->
-                <div id="card-local" class="relative rounded-2xl overflow-hidden bg-slate-900 border border-darkBorder aspect-video w-full flex items-center justify-center shadow-xl transition-all duration-300">
-                    <video id="meeting-local-video" autoplay muted playsinline class="w-full h-full object-cover mirror"></video>
-                    <canvas id="meeting-canvas" class="absolute inset-0 w-full h-full object-cover hidden"></canvas>
-
-                    <div id="meeting-local-avatar" class="absolute inset-0 bg-slate-900 flex items-center justify-center hidden">
-                        <div id="meeting-circle" class="w-20 h-20 rounded-full flex items-center justify-center text-3xl font-extrabold text-white"></div>
-                    </div>
-                    <div class="absolute bottom-3 left-3 bg-slate-950/80 backdrop-blur-md border border-darkBorder text-white text-xs px-2.5 py-1 rounded-lg flex items-center gap-2">
-                        <i id="local-mic-badge" class="ph-fill ph-microphone text-blue-400"></i>
-                        <span>You (Host)</span>
-                    </div>
-                </div>
-
-                <!-- Dyn-participants will fill this in real-time -->
-            </div>
-
-            <!-- Closed Captions Overlay Panel -->
-            <div id="cc-overlay" class="absolute bottom-24 left-1/2 -translate-x-1/2 max-w-2xl w-full bg-slate-950/90 border border-darkBorder text-yellow-300 font-semibold px-6 py-4 rounded-2xl text-center hidden pointer-events-none text-base z-30 shadow-2xl">
-                <p id="cc-text" class="caption-text">Listening for speech...</p>
-            </div>
-
-            <!-- Right Functional Tabbed panel system -->
-            <div id="meeting-sidebar" class="w-0 overflow-hidden bg-darkPanel border-l border-darkBorder flex flex-col transition-all duration-300 z-20 shadow-2xl relative">
-                
-                <!-- Tab Controls -->
-                <div class="h-14 border-b border-darkBorder flex items-center justify-between px-4 shrink-0 bg-slate-950">
-                    <div class="flex gap-1.5 overflow-x-auto no-scrollbar py-1">
-                        <button onclick="Sidebar.setTab('chat')" id="btn-tab-chat" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-slate-900 text-primary">Chat</button>
-                        <button onclick="Sidebar.setTab('people')" id="btn-tab-people" class="px-2.5 py-1 text-xs font-bold rounded-lg text-slate-400">People</button>
-                        <button onclick="Sidebar.setTab('polls')" id="btn-tab-polls" class="px-2.5 py-1 text-xs font-bold rounded-lg text-slate-400">Polls</button>
-                        <button onclick="Sidebar.setTab('notes')" id="btn-tab-notes" class="px-2.5 py-1 text-xs font-bold rounded-lg text-slate-400">Notes</button>
-                        <button onclick="Sidebar.setTab('files')" id="btn-tab-files" class="px-2.5 py-1 text-xs font-bold rounded-lg text-slate-400">Files</button>
-                        <button onclick="Sidebar.setTab('host')" id="btn-tab-host" class="px-2.5 py-1 text-xs font-bold rounded-lg text-slate-400">Host</button>
-                    </div>
-                    <button onclick="Sidebar.close()" class="text-slate-400 hover:text-white p-1"><i class="ph ph-x text-lg"></i></button>
-                </div>
-
-                <!-- Chat tab panel -->
-                <div id="tab-panel-chat" class="flex-1 flex flex-col hidden h-full">
-                    <div id="chat-scroller" class="flex-1 overflow-y-auto p-4 space-y-4"></div>
-                    <div class="p-3 border-t border-darkBorder bg-slate-950/50">
-                        <form onsubmit="Chat.submitMessage(event)" class="flex gap-2">
-                            <input type="text" id="chat-msg-input" placeholder="Type message..." class="flex-1 bg-slate-950 border border-darkBorder rounded-xl px-4 py-2 outline-none text-sm focus:ring-1 focus:ring-primary">
-                            <button type="submit" class="p-2.5 bg-primary text-white rounded-xl hover:bg-primaryHover transition"><i class="ph-fill ph-paper-plane-right text-lg"></i></button>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- People / Waiting Queue tab panel -->
-                <div id="tab-panel-people" class="flex-1 flex flex-col hidden h-full">
-                    <div class="p-3 bg-slate-950/20 border-b border-darkBorder">
-                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Raised Hands / Attendees Queue</span>
-                    </div>
-                    <div id="queue-scroller" class="p-3 space-y-2 max-h-[140px] overflow-y-auto border-b border-darkBorder bg-slate-950/40 hidden">
-                        <!-- Raised hands lists dynamically -->
-                    </div>
-                    <div id="people-scroller" class="flex-1 overflow-y-auto p-3 space-y-2"></div>
-                </div>
-
-                <!-- Polls tab panel -->
-                <div id="tab-panel-polls" class="flex-1 flex flex-col hidden h-full p-4 space-y-4 overflow-y-auto">
-                    <div class="space-y-3">
-                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Create A New Poll</span>
-                        <input type="text" id="poll-question" placeholder="Question?" class="w-full bg-slate-950 border border-darkBorder rounded-xl px-4 py-2 outline-none text-sm focus:ring-1 focus:ring-primary">
-                        <div class="grid grid-cols-2 gap-2">
-                            <input type="text" id="poll-opt1" placeholder="Option A" class="bg-slate-950 border border-darkBorder rounded-xl px-3 py-1.5 outline-none text-sm">
-                            <input type="text" id="poll-opt2" placeholder="Option B" class="bg-slate-950 border border-darkBorder rounded-xl px-3 py-1.5 outline-none text-sm">
-                        </div>
-                        <button onclick="Polls.initiatePoll()" class="w-full bg-primary hover:bg-primaryHover py-2 rounded-xl text-sm font-bold transition">Launch Live Poll</button>
-                    </div>
-                    <div id="active-poll-card" class="bg-slate-950 border border-darkBorder rounded-2xl p-4 space-y-4 hidden">
-                        <h4 id="live-poll-question" class="font-bold text-sm">Active Question?</h4>
-                        <div class="space-y-2">
-                            <button onclick="Polls.vote(1)" class="w-full bg-slate-900 border border-darkBorder rounded-lg p-2 text-left text-xs hover:bg-slate-800 transition">
-                                <div class="flex justify-between font-semibold mb-1">
-                                    <span id="label-opt1">A</span>
-                                    <span id="percent-opt1">0%</span>
-                                </div>
-                                <div class="w-full bg-slate-950 h-1.5 rounded-full overflow-hidden">
-                                    <div id="bar-opt1" class="bg-primary h-full transition-all duration-300" style="width: 0%"></div>
-                                </div>
-                            </button>
-                            <button onclick="Polls.vote(2)" class="w-full bg-slate-900 border border-darkBorder rounded-lg p-2 text-left text-xs hover:bg-slate-800 transition">
-                                <div class="flex justify-between font-semibold mb-1">
-                                    <span id="label-opt2">B</span>
-                                    <span id="percent-opt2">0%</span>
-                                </div>
-                                <div class="w-full bg-slate-950 h-1.5 rounded-full overflow-hidden">
-                                    <div id="bar-opt2" class="bg-emerald-500 h-full transition-all duration-300" style="width: 0%"></div>
-                                </div>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Collaborative Notes tab panel -->
-                <div id="tab-panel-notes" class="flex-1 flex flex-col hidden h-full p-4 space-y-3">
-                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Meeting Document Notes</span>
-                    <textarea id="notes-textarea" class="flex-1 bg-slate-950 border border-darkBorder rounded-2xl p-4 outline-none text-sm resize-none focus:ring-1 focus:ring-primary leading-relaxed" placeholder="Write down notes shared in this meeting..."></textarea>
-                    <button onclick="Notes.export()" class="w-full bg-slate-850 hover:bg-slate-800 border border-darkBorder py-2 rounded-xl text-sm font-semibold flex items-center justify-center gap-1.5 transition">
-                        <i class="ph ph-download-simple"></i> Export as Text Document
-                    </button>
-                </div>
-
-                <!-- File Hub Panel -->
-                <div id="tab-panel-files" class="flex-1 flex flex-col hidden h-full p-4 space-y-4">
-                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">P2P Shared Files</span>
-                    <div class="border-2 border-dashed border-darkBorder rounded-2xl p-6 text-center hover:border-primary transition cursor-pointer relative">
-                        <input type="file" id="file-uploader" onchange="Files.simulateUpload(event)" class="absolute inset-0 opacity-0 cursor-pointer">
-                        <i class="ph ph-cloud-arrow-up text-3xl text-slate-500 mb-2"></i>
-                        <p class="text-xs text-slate-400">Drag & Drop or Click to share a file</p>
-                    </div>
-                    <div id="files-scroller" class="space-y-2 overflow-y-auto flex-1"></div>
-                </div>
-
-                <!-- Host Controls Panel -->
-                <div id="tab-panel-host" class="flex-1 flex flex-col hidden h-full p-4 space-y-4">
-                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Global Restrictions</span>
-                    <div class="space-y-4 bg-slate-950/40 p-4 rounded-2xl border border-darkBorder">
-                        <div class="flex items-center justify-between">
-                            <span class="text-sm font-semibold">Lock Meeting Space</span>
-                            <input type="checkbox" id="host-lock-check" onchange="Host.toggleRoomLock()" class="w-4 h-4 rounded accent-primary">
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-sm font-semibold">Enable Chat Feed</span>
-                            <input type="checkbox" id="host-chat-check" checked class="w-4 h-4 rounded accent-primary">
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-sm font-semibold">Allow Screen Share</span>
-                            <input type="checkbox" id="host-share-check" checked class="w-4 h-4 rounded accent-primary">
-                        </div>
-                    </div>
-                    <button onclick="Meeting.muteAll()" class="w-full bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 py-3 rounded-xl text-sm font-bold transition">Force Mute All Guests</button>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- Collaborative Board Overlay (Absolute Frame over Video Layout) -->
-        <div id="whiteboard-wrapper" class="absolute inset-0 bg-slate-900 z-10 hidden flex-col">
-            <div class="h-14 bg-slate-950 border-b border-darkBorder flex items-center justify-between px-6 shrink-0">
-                <div class="flex items-center gap-2">
-                    <i class="ph-fill ph-chalkboard text-xl text-primary"></i>
-                    <span class="font-bold text-sm">Interactive Whiteboard</span>
-                </div>
-                <!-- Drawing Actions -->
-                <div class="flex items-center gap-3">
-                    <input type="color" id="wb-color" value="#3b82f6" class="w-7 h-7 rounded-lg overflow-hidden border-0 bg-transparent cursor-pointer">
-                    <input type="range" id="wb-brush-size" min="2" max="24" value="5" class="w-20 accent-primary">
-                    <div class="h-5 w-px bg-darkBorder"></div>
-                    <button onclick="Whiteboard.setBrush('pencil')" id="wb-pencil" class="p-1.5 rounded-lg bg-slate-800 text-white text-sm"><i class="ph ph-pencil-simple-line"></i></button>
-                    <button onclick="Whiteboard.setBrush('eraser')" id="wb-eraser" class="p-1.5 rounded-lg text-slate-400 hover:text-white text-sm"><i class="ph ph-eraser"></i></button>
-                    <button onclick="Whiteboard.clear()" class="p-1.5 rounded-lg text-red-400 hover:bg-red-500/10 text-sm"><i class="ph ph-trash"></i></button>
-                    <button onclick="Whiteboard.export()" class="p-1.5 rounded-lg text-emerald-400 hover:bg-emerald-500/10 text-sm"><i class="ph ph-floppy-disk"></i></button>
-                </div>
-                <button onclick="Meeting.toggleWhiteboard()" class="text-slate-400 hover:text-white"><i class="ph ph-x text-lg"></i></button>
-            </div>
-            <div class="flex-1 bg-slate-950 relative">
-                <canvas id="whiteboard-canvas" class="absolute inset-0 w-full h-full cursor-crosshair"></canvas>
-            </div>
-        </div>
-
-        <!-- Diagnostics Quality HUD (Collapsible panel) -->
-        <div id="diagnostics-hud" class="absolute top-16 right-6 z-30 bg-slate-950/90 border border-darkBorder rounded-2xl p-4 max-w-xs w-full hidden backdrop-blur-md">
-            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">System Performance & Quality</h4>
-            <div class="space-y-1.5 text-xs font-mono">
-                <div class="flex justify-between"><span>FPS Frame-Rate</span><span id="hud-fps" class="text-green-400">60 fps</span></div>
-                <div class="flex justify-between"><span>Network Ping</span><span id="hud-ping" class="text-emerald-400">12 ms</span></div>
-                <div class="flex justify-between"><span>Packet Loss</span><span id="hud-loss" class="text-slate-500">0.00 %</span></div>
-                <div class="flex justify-between"><span>CPU Estimate</span><span id="hud-cpu" class="text-yellow-400">18 %</span></div>
-            </div>
-        </div>
-
-        <!-- Breakout Room Banner Alert -->
-        <div id="breakout-banner" class="hidden absolute top-16 left-1/2 -translate-x-1/2 z-30 bg-indigo-950/95 border border-indigo-500/30 text-indigo-300 px-6 py-2.5 rounded-2xl shadow-xl flex items-center gap-3 backdrop-blur-md">
-            <div class="w-2.5 h-2.5 bg-indigo-500 rounded-full animate-ping"></div>
-            <span class="text-sm font-semibold">Breakout Active: Room Alpha • Returning in <b id="breakout-timer">00:30</b></span>
-            <button onclick="Breakout.stop()" class="text-xs bg-indigo-600/30 text-indigo-200 border border-indigo-500/40 px-2.5 py-1 rounded-lg hover:bg-indigo-600/50">Return to Lobby</button>
-        </div>
-
-        <!-- Meeting Room Bottom Action Toolbar -->
-        <div class="absolute bottom-0 left-0 right-0 h-20 bg-slate-950 border-t border-darkBorder flex items-center justify-between px-6 z-20">
-            
-            <!-- Audio / Video Controllers -->
-            <div class="flex items-center gap-3">
-                <button onclick="WebRTC.toggleMic()" id="meeting-mic-btn" class="w-12 h-12 rounded-2xl bg-slate-900 border border-darkBorder text-white flex items-center justify-center transition">
-                    <i class="ph-fill ph-microphone text-lg"></i>
-                </button>
-                <button onclick="WebRTC.toggleCam()" id="meeting-cam-btn" class="w-12 h-12 rounded-2xl bg-slate-900 border border-darkBorder text-white flex items-center justify-center transition">
-                    <i class="ph-fill ph-video-camera text-lg"></i>
-                </button>
-            </div>
-
-            <!-- Central Collaboration Toolbar -->
-            <div class="flex items-center gap-2">
-                <button onclick="WebRTC.toggleScreenShare()" id="meeting-share-btn" class="w-11 h-11 rounded-xl bg-slate-900 border border-darkBorder text-slate-300 hover:text-white flex items-center justify-center transition" title="Share Screen">
-                    <i class="ph ph-screencast text-lg"></i>
-                </button>
-                <button onclick="Meeting.toggleWhiteboard()" id="meeting-wb-btn" class="w-11 h-11 rounded-xl bg-slate-900 border border-darkBorder text-slate-300 hover:text-white flex items-center justify-center transition" title="Whiteboard">
-                    <i class="ph ph-chalkboard text-lg"></i>
-                </button>
-                <button onclick="Meeting.toggleCaptions()" id="meeting-cc-btn" class="w-11 h-11 rounded-xl bg-slate-900 border border-darkBorder text-slate-300 hover:text-white flex items-center justify-center transition" title="Subtitles">
-                    <i class="ph ph-closed-captioning text-lg"></i>
-                </button>
-                <button onclick="Meeting.toggleRecording()" id="meeting-rec-btn" class="w-11 h-11 rounded-xl bg-slate-900 border border-darkBorder text-slate-300 hover:text-white flex items-center justify-center transition" title="Record Space">
-                    <i class="ph ph-record text-lg"></i>
-                </button>
-                <button onclick="Meeting.toggleDiagnostics()" id="meeting-diag-btn" class="w-11 h-11 rounded-xl bg-slate-900 border border-darkBorder text-slate-300 hover:text-white flex items-center justify-center transition" title="Analytics HUD">
-                    <i class="ph ph-activity text-lg"></i>
-                </button>
-                <button onclick="Breakout.start()" class="w-11 h-11 rounded-xl bg-slate-900 border border-darkBorder text-slate-300 hover:text-white hidden sm:flex items-center justify-center transition" title="Breakout Rooms">
-                    <i class="ph ph-tree-structure text-lg"></i>
-                </button>
-                
-                <!-- Soundboard Trigger Popover -->
-                <div class="relative group">
-                    <button class="w-11 h-11 rounded-xl bg-slate-900 border border-darkBorder text-slate-300 hover:text-white flex items-center justify-center transition" title="Sound Effects">
-                        <i class="ph ph-speaker-high text-lg"></i>
-                    </button>
-                    <!-- Soundboard dropdown -->
-                    <div class="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 bg-slate-950 border border-darkBorder rounded-2xl p-2.5 flex-col gap-1.5 hidden group-hover:flex shadow-2xl min-w-[120px] z-30">
-                        <button onclick="Soundboard.play('applause')" class="px-3 py-1.5 text-xs text-slate-200 hover:bg-slate-900 rounded-lg text-left transition flex items-center gap-1">👏 Applause</button>
-                        <button onclick="Soundboard.play('chime')" class="px-3 py-1.5 text-xs text-slate-200 hover:bg-slate-900 rounded-lg text-left transition flex items-center gap-1">🔔 Chime</button>
-                        <button onclick="Soundboard.play('laugh')" class="px-3 py-1.5 text-xs text-slate-200 hover:bg-slate-900 rounded-lg text-left transition flex items-center gap-1">😂 Laughter</button>
-                    </div>
-                </div>
-
-                <!-- Reactions Popover -->
-                <div class="relative group">
-                    <button class="w-11 h-11 rounded-xl bg-slate-900 border border-darkBorder text-slate-300 hover:text-white flex items-center justify-center transition" title="Reactions">
-                        <i class="ph ph-smiley text-lg"></i>
-                    </button>
-                    <!-- Reactions list -->
-                    <div class="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 bg-slate-950 border border-darkBorder rounded-2xl p-2 flex gap-1 hidden group-hover:flex shadow-2xl z-30">
-                        <button onclick="Meeting.triggerEmoji('👍')" class="text-lg p-1.5 hover:bg-slate-900 rounded-lg transition">👍</button>
-                        <button onclick="Meeting.triggerEmoji('❤️')" class="text-lg p-1.5 hover:bg-slate-900 rounded-lg transition">❤️</button>
-                        <button onclick="Meeting.triggerEmoji('👏')" class="text-lg p-1.5 hover:bg-slate-900 rounded-lg transition">👏</button>
-                        <button onclick="Meeting.triggerEmoji('😂')" class="text-lg p-1.5 hover:bg-slate-900 rounded-lg transition">😂</button>
-                        <button onclick="Meeting.triggerEmoji('🎉')" class="text-lg p-1.5 hover:bg-slate-900 rounded-lg transition">🎉</button>
-                        <button onclick="Meeting.raiseHand()" class="text-lg p-1.5 hover:bg-slate-900 rounded-lg transition" title="Raise Hand">✋</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Panel Triggers & Session Closure -->
-            <div class="flex items-center gap-3">
-                <button onclick="Sidebar.toggle('people')" class="w-11 h-11 rounded-xl bg-slate-900 border border-darkBorder text-slate-300 hover:text-white flex items-center justify-center transition relative">
-                    <i class="ph ph-users text-lg"></i>
-                    <span id="badge-people" class="absolute -top-1 -right-1 bg-primary text-white text-[10px] w-4.5 h-4.5 rounded-full flex items-center justify-center font-black">1</span>
-                </button>
-                <button onclick="Sidebar.toggle('chat')" class="w-11 h-11 rounded-xl bg-slate-900 border border-darkBorder text-slate-300 hover:text-white flex items-center justify-center transition relative">
-                    <i class="ph ph-chat-teardrop text-lg"></i>
-                </button>
-                <button onclick="Meeting.terminate()" class="bg-red-500 hover:bg-red-600 text-white font-bold text-sm px-5 py-3 rounded-2xl transition shadow-lg shadow-red-500/20">
-                    Exit Space
-                </button>
-            </div>
-
-        </div>
-
-    </section>
-
-    <!-- Global Javascript Processing Hub -->
-    <script>
-        // State Management Global Object
-        const AppState = {
-            user: null,
-            currentView: 'auth',
-            activeMeeting: {
-                id: null,
-                passcode: null,
-                isHost: false,
-                isRecording: false,
-                startTime: null,
-                timerToken: null,
-                participants: [],
-                waitingRoom: true,
-                locked: false,
-                chatPrivilege: true,
-                sharePrivilege: true,
-                handRaised: false
-            },
-            webrtc: {
-                localStream: null,
-                localVideoTrack: null,
-                localAudioTrack: null,
-                screenStream: null,
-                filterType: 'none',
-                captionsActive: false,
-                micEnabled: true,
-                camEnabled: true,
-                screenEnabled: false,
-                pipActive: false
-            }
-        };
-
-        const MOCK_NAMES = ["Devon Lane", "Jane Cooper", "Esther Howard", "Albert Flores", "Guy Hawkins"];
-        const COLOR_CLASSES = ["bg-blue-600", "bg-purple-600", "bg-emerald-600", "bg-indigo-600", "bg-pink-600"];
-
-        // Initialization Logic
-        const Storage = {
-            init() {
-                const existingUser = localStorage.getItem('mf_pro_user');
-                if (existingUser) {
-                    AppState.user = JSON.parse(existingUser);
-                    UI.setView('dashboard');
-                    Dashboard.init();
-                }
-                
-                // Deep-linking parsing from URL search params
-                const params = new URLSearchParams(window.location.search);
-                const queryId = params.get('joinId');
-                const queryPwd = params.get('pwd');
-                if(queryId) {
-                    setTimeout(() => {
-                        if(AppState.user) {
-                            Dashboard.performAutoLinkJoin(queryId, queryPwd);
-                        } else {
-                            // Prepopulate Join box to let them login first
-                            document.getElementById('guest-meeting-id').value = queryId;
-                            Auth.switchTab('guest');
-                            UI.showToast("Secure Invitation detected. Please enter display name.");
-                        }
-                    }, 500);
-                }
-            },
-            saveUser(user) {
-                localStorage.setItem('mf_pro_user', JSON.stringify(user));
-                AppState.user = user;
-            },
-            clearUser() {
-                localStorage.removeItem('mf_pro_user');
-                AppState.user = null;
-            }
-        };
-
-        // UI View Transition Management
-        const UI = {
-            setView(viewName) {
-                document.querySelectorAll('section').forEach(el => el.classList.add('hidden'));
-                document.getElementById(`view-${viewName}`).classList.remove('hidden');
-                AppState.currentView = viewName;
-                if(viewName !== 'meeting' && viewName !== 'prejoin') {
-                    WebRTC.stopAllTracks();
-                }
-            },
-            showToast(message, type = 'success') {
-                const container = document.getElementById('toast-container');
-                const el = document.createElement('div');
-                el.className = `flex items-center gap-2 px-4 py-3 rounded-xl shadow-xl transition-all duration-300 translate-y-2 opacity-0 text-xs font-semibold
-                    ${type === 'error' ? 'bg-red-500/10 border border-red-500/20 text-red-400' : 'bg-slate-900 border border-darkBorder text-slate-100'}`;
-                
-                const icon = type === 'error' ? '<i class="ph ph-warning-circle text-base"></i>' : '<i class="ph ph-check-circle text-base text-primary"></i>';
-                el.innerHTML = `${icon} <span>${message}</span>`;
-                container.appendChild(el);
-                
-                setTimeout(() => el.classList.remove('translate-y-2', 'opacity-0'), 10);
-                setTimeout(() => {
-                    el.classList.add('opacity-0', 'translate-x-4');
-                    setTimeout(() => el.remove(), 300);
-                }, 3500);
-            },
-            openModal(modalId) {
-                document.getElementById('modal-overlay').classList.remove('hidden');
-                document.getElementById('modal-overlay').classList.add('flex');
-                document.querySelectorAll('#modal-overlay > div').forEach(el => el.classList.add('hidden'));
-                document.getElementById(modalId).classList.remove('hidden');
-                document.getElementById(modalId).classList.add('flex');
-            },
-            closeModals() {
-                document.getElementById('modal-overlay').classList.add('hidden');
-            },
-            getInitials(name) {
-                return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-            }
-        };
-
-        // Authentication Methods
-        const Auth = {
-            switchTab(tab) {
-                document.getElementById('form-login').classList.add('hidden');
-                document.getElementById('form-guest').classList.add('hidden');
-                document.getElementById(`form-${tab}`).classList.remove('hidden');
-                
-                const act = "bg-darkPanel text-white shadow";
-                const inact = "text-slate-400 hover:text-white";
-                
-                document.getElementById('tab-login').className = `flex-1 py-2 text-sm font-semibold rounded-lg transition ${tab === 'login' ? act : inact}`;
-                document.getElementById('tab-guest').className = `flex-1 py-2 text-sm font-semibold rounded-lg transition ${tab === 'guest' ? act : inact}`;
-            },
-            handleLogin(e) {
-                e.preventDefault();
-                const email = document.getElementById('login-email').value;
-                const name = email.split('@')[0].toUpperCase();
-                const userObj = { name, email, isGuest: false, color: COLOR_CLASSES[0] };
-                Storage.saveUser(userObj);
-                UI.setView('dashboard');
-                Dashboard.init();
-            },
-            handleGuest(e) {
-                e.preventDefault();
-                const name = document.getElementById('guest-name').value;
-                const userObj = { name, email: null, isGuest: true, color: COLOR_CLASSES[1] };
-                Storage.saveUser(userObj);
-                UI.setView('dashboard');
-                Dashboard.init();
-                
-                const targetId = document.getElementById('guest-meeting-id').value.trim();
-                if(targetId) {
-                    Dashboard.performAutoLinkJoin(targetId, "");
-                }
-            },
-            logout() {
-                Storage.clearUser();
-                UI.setView('auth');
-            }
-        };
-
-        // Dashboard Core Methods
-        const Dashboard = {
-            init() {
-                if(!AppState.user) return;
-                document.getElementById('dash-user-label').textContent = `Hello, ${AppState.user.name}`;
-                document.getElementById('dash-avatar').textContent = UI.getInitials(AppState.user.name);
-                this.renderHistory();
-                this.renderScheduled();
-            },
-            toggleJoinPanel() {
-                document.getElementById('join-control-panel').classList.toggle('hidden');
-            },
-            openStartMeeting() {
-                const id = Math.random().toString(36).substring(2, 11).match(/.{1,3}/g).join('-');
-                const passcode = Math.floor(100000 + Math.random() * 900000).toString();
-                
-                document.getElementById('new-room-id').textContent = id;
-                document.getElementById('new-room-passcode').textContent = passcode;
-                
-                AppState.activeMeeting.id = id;
-                AppState.activeMeeting.passcode = passcode;
-                AppState.activeMeeting.isHost = true;
-                
-                UI.openModal('start-meeting-modal');
-            },
-            confirmAndLaunchMeeting() {
-                UI.closeModals();
-                PreJoin.init();
-            },
-            initiateManualJoin() {
-                const id = document.getElementById('join-id-input').value.trim();
-                const pwd = document.getElementById('join-pass-input').value.trim();
-                
-                if(!id) {
-                    UI.showToast("Please enter a valid meeting ID", "error");
-                    return;
-                }
-                
-                AppState.activeMeeting.id = id;
-                AppState.activeMeeting.passcode = pwd || null;
-                AppState.activeMeeting.isHost = false;
-                
-                PreJoin.init();
-            },
-            performAutoLinkJoin(id, pwd) {
-                AppState.activeMeeting.id = id;
-                AppState.activeMeeting.passcode = pwd || null;
-                AppState.activeMeeting.isHost = false;
-                PreJoin.init();
-            },
-            verifyPasscodeAndJoin() {
-                const entered = document.getElementById('input-verify-passcode').value.trim();
-                if (entered === AppState.activeMeeting.passcode) {
-                    UI.closeModals();
-                    PreJoin.launchDirect();
-                } else {
-                    UI.showToast("Incorrect Passcode. Access Denied.", "error");
-                }
-            },
-            completeScheduling() {
-                const subject = document.getElementById('sch-subject').value;
-                const date = document.getElementById('sch-date').value;
-                const time = document.getElementById('sch-time').value;
-                
-                if(!date || !time) {
-                    UI.showToast("Please select correct date and time", "error");
-                    return;
-                }
-                
-                const id = Math.random().toString(36).substring(2, 11).match(/.{1,3}/g).join('-');
-                const passcode = Math.floor(100000 + Math.random() * 900000).toString();
-                
-                // Add to persistent Scheduled Storage
-                let list = JSON.parse(localStorage.getItem('scheduled_rooms') || '[]');
-                list.push({ id, passcode, subject, date, time });
-                localStorage.setItem('scheduled_rooms', JSON.stringify(list));
-                
-                // ICS Calendar Invitation
-                const icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nSUMMARY:" + subject + "\nDESCRIPTION:Join MeetFlow Pro Secure Room: " + id + " Code: " + passcode + "\nDTSTART:" + date.replace(/-/g,'') + "T" + time.replace(':','') + "00\nEND:VEVENT\nEND:VCALENDAR";
-                const blob = new Blob([icsContent], {type: 'text/calendar'});
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = `${subject.replace(/\s+/g,'_')}.ics`;
-                link.click();
-                
-                UI.showToast("Meeting Scheduled! ICS Invitation downloaded.");
-                UI.closeModals();
-                this.renderScheduled();
-            },
-            renderScheduled() {
-                const container = document.getElementById('scheduled-container');
-                container.innerHTML = '';
-                const list = JSON.parse(localStorage.getItem('scheduled_rooms') || '[]');
-                
-                if(list.length === 0) {
-                    container.innerHTML = '<p class="text-xs text-slate-500 text-center py-4">No scheduled sessions</p>';
-                    return;
-                }
-                
-                list.forEach(m => {
-                    const el = document.createElement('div');
-                    el.className = "bg-slate-900 border border-darkBorder p-3 rounded-xl flex items-center justify-between";
-                    el.innerHTML = `
-                        <div class="truncate pr-2">
-                            <span class="block text-xs font-bold text-slate-200 truncate">${m.subject}</span>
-                            <span class="text-[10px] text-slate-400 font-mono">${m.date} | ${m.time}</span>
-                        </div>
-                        <button onclick="Dashboard.performAutoLinkJoin('${m.id}', '${m.passcode}')" class="bg-primary hover:bg-primaryHover text-white text-[10px] font-bold px-3 py-1.5 rounded-lg shrink-0">Join</button>
-                    `;
-                    container.appendChild(el);
-                });
-            },
-            renderHistory() {
-                const container = document.getElementById('history-container');
-                container.innerHTML = '';
-                const list = JSON.parse(localStorage.getItem('session_history') || '[]');
-                
-                if(list.length === 0) {
-                    container.innerHTML = '<p class="text-xs text-slate-500 text-center py-4">No previous sessions detected</p>';
-                    return;
-                }
-                
-                list.forEach(h => {
-                    const el = document.createElement('div');
-                    el.className = "bg-slate-900 border border-darkBorder p-3 rounded-xl flex items-center justify-between text-xs";
-                    el.innerHTML = `
-                        <div>
-                            <span class="block font-bold text-slate-300">Room: ${h.id}</span>
-                            <span class="text-[10px] text-slate-500">${h.duration} Session</span>
-                        </div>
-                        <span class="text-[10px] text-slate-400 font-mono">${h.date}</span>
-                    `;
-                    container.appendChild(el);
-                });
-            }
-        };
-
-        // PreJoin Configuration
-        const PreJoin = {
-            init() {
-                UI.setView('prejoin');
-                WebRTC.initPreview();
-                
-                // Display accurate details inside PreJoin action card
-                document.getElementById('prejoin-disp-id').textContent = AppState.activeMeeting.id || "---";
-                document.getElementById('prejoin-disp-pass').textContent = AppState.activeMeeting.passcode || "No Passcode Set";
-            },
-            changeFilter(value) {
-                AppState.webrtc.filterType = value;
-                const canvas = document.getElementById('prejoin-filter-canvas');
-                const video = document.getElementById('prejoin-video');
-                
-                if(value === 'none') {
-                    canvas.classList.add('hidden');
-                    video.classList.remove('hidden');
-                } else {
-                    canvas.classList.remove('hidden');
-                    video.classList.add('hidden');
-                    PreJoin.applyCanvasFilterLoop(video, canvas);
-                }
-            },
-            applyCanvasFilterLoop(video, canvas) {
-                const ctx = canvas.getContext('2d');
-                
-                const process = () => {
-                    if (AppState.currentView !== 'prejoin' && AppState.currentView !== 'meeting') return;
-                    if (video.paused || video.ended) return;
-                    
-                    canvas.width = video.videoWidth || 640;
-                    canvas.height = video.videoHeight || 480;
-                    
-                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                    let imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                    let data = imgData.data;
-                    
-                    if (AppState.webrtc.filterType === 'sepia') {
-                        for (let i = 0; i < data.length; i += 4) {
-                            let r = data[i], g = data[i+1], b = data[i+2];
-                            data[i] = (r * 0.393) + (g * 0.769) + (b * 0.189);
-                            data[i+1] = (r * 0.349) + (g * 0.686) + (b * 0.168);
-                            data[i+2] = (r * 0.272) + (g * 0.534) + (b * 0.131);
-                        }
-                    } else if (AppState.webrtc.filterType === 'grayscale') {
-                        for (let i = 0; i < data.length; i += 4) {
-                            let brightness = 0.34 * data[i] + 0.5 * data[i+1] + 0.16 * data[i+2];
-                            data[i] = brightness;
-                            data[i+1] = brightness;
-                            data[i+2] = brightness;
-                        }
-                    } else if (AppState.webrtc.filterType === 'chromakey') {
-                        for (let i = 0; i < data.length; i += 4) {
-                            if (data[i] < 90 && data[i+1] < 90) {
-                                data[i] = 19;     // R
-                                data[i+1] = 78;    // G
-                                data[i+2] = 100;   // B
-                            }
-                        }
-                    }
-                    
-                    ctx.putImageData(imgData, 0, 0);
-                    
-                    if(AppState.webrtc.filterType === 'blur') {
-                        ctx.filter = 'blur(8px)';
-                        ctx.drawImage(canvas, 0, 0);
-                        ctx.filter = 'none';
-                    }
-                    
-                    requestAnimationFrame(process);
-                };
-                
-                video.addEventListener('play', process);
-                if (video.readyState >= 2) process();
-            },
-            join() {
-                // If the user is joining a meeting (not the host) and a passcode is set, verify it first
-                if(!AppState.activeMeeting.isHost && AppState.activeMeeting.passcode) {
-                    UI.openModal('passcode-modal');
-                } else {
-                    PreJoin.launchDirect();
-                }
-            },
-            launchDirect() {
-                // Lobby validation if guest
-                if(!AppState.activeMeeting.isHost && AppState.activeMeeting.waitingRoom) {
-                    UI.showToast("Entering host waiting room. Please stand by...", "success");
-                    setTimeout(() => {
-                        Lobby.triggerRequest();
-                    }, 1200);
-                } else {
-                    Meeting.begin();
-                }
-            }
-        };
-
-        // Lobby (Waiting Room System) Simulation
-        const Lobby = {
-            triggerRequest() {
-                // Open visual prompt on virtual "Host" side
-                UI.openModal('lobby-modal');
-                document.getElementById('lobby-request-text').textContent = `${AppState.user.name} wants to enter this locked space.`;
-            },
-            admit() {
-                UI.closeModals();
-                UI.showToast("Access Granted. Entering meeting room.");
-                Meeting.begin();
-            },
-            reject() {
-                UI.closeModals();
-                UI.showToast("Host denied entry access.", "error");
-                UI.setView('dashboard');
-            }
-        };
-
-        // WebRTC & Media Pipeline Setup
-        const WebRTC = {
-            async initPreview() {
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-                    AppState.webrtc.localStream = stream;
-                    AppState.webrtc.localVideoTrack = stream.getVideoTracks()[0];
-                    AppState.webrtc.localAudioTrack = stream.getAudioTracks()[0];
-                    
-                    const video = document.getElementById('prejoin-video');
-                    video.srcObject = stream;
-                    
-                    AppState.webrtc.micEnabled = true;
-                    AppState.webrtc.camEnabled = true;
-                    
-                    document.getElementById('prejoin-avatar-fallback').classList.add('hidden');
-                    video.classList.remove('hidden');
-                } catch (e) {
-                    UI.showToast("Camera access restricted. Running in Avatar placeholder mode.", "error");
-                    AppState.webrtc.camEnabled = false;
-                    AppState.webrtc.micEnabled = false;
-                    this.showAvatarFallback('prejoin-avatar-fallback', 'prejoin-circle');
-                }
-            },
-            showAvatarFallback(avatarElId, innerCircleId) {
-                document.getElementById(avatarElId).classList.remove('hidden');
-                const circ = document.getElementById(innerCircleId);
-                circ.textContent = UI.getInitials(AppState.user.name);
-                circ.className = `w-20 h-20 rounded-full ${AppState.user.color} flex items-center justify-center text-3xl font-bold shadow-lg`;
-            },
-            toggleMicPrejoin() {
-                if(AppState.webrtc.localAudioTrack) {
-                    AppState.webrtc.localAudioTrack.enabled = !AppState.webrtc.localAudioTrack.enabled;
-                    AppState.webrtc.micEnabled = AppState.webrtc.localAudioTrack.enabled;
-                    document.getElementById('pre-mic-btn').innerHTML = AppState.webrtc.micEnabled ? '<i class="ph-fill ph-microphone text-lg text-white"></i>' : '<i class="ph-fill ph-microphone-slash text-lg text-red-500"></i>';
-                }
-            },
-            toggleCamPrejoin() {
-                if(AppState.webrtc.localVideoTrack) {
-                    AppState.webrtc.localVideoTrack.enabled = !AppState.webrtc.localVideoTrack.enabled;
-                    AppState.webrtc.camEnabled = AppState.webrtc.localVideoTrack.enabled;
-                    document.getElementById('pre-cam-btn').innerHTML = AppState.webrtc.camEnabled ? '<i class="ph-fill ph-video-camera text-lg text-white"></i>' : '<i class="ph-fill ph-video-camera-slash text-lg text-red-500"></i>';
-                    if(AppState.webrtc.camEnabled) {
-                        document.getElementById('prejoin-avatar-fallback').classList.add('hidden');
-                    } else {
-                        this.showAvatarFallback('prejoin-avatar-fallback', 'prejoin-circle');
-                    }
-                }
-            },
-            toggleMic() {
-                AppState.webrtc.micEnabled = !AppState.webrtc.micEnabled;
-                if(AppState.webrtc.localAudioTrack) {
-                    AppState.webrtc.localAudioTrack.enabled = AppState.webrtc.micEnabled;
-                }
-                const btn = document.getElementById('meeting-mic-btn');
-                btn.innerHTML = AppState.webrtc.micEnabled ? '<i class="ph-fill ph-microphone text-lg text-white"></i>' : '<i class="ph-fill ph-microphone-slash text-lg text-red-500"></i>';
-                document.getElementById('local-mic-badge').className = AppState.webrtc.micEnabled ? 'ph-fill ph-microphone text-blue-400' : 'ph-fill ph-microphone-slash text-red-500';
-            },
-            toggleCam() {
-                AppState.webrtc.camEnabled = !AppState.webrtc.camEnabled;
-                if(AppState.webrtc.localVideoTrack) {
-                    AppState.webrtc.localVideoTrack.enabled = AppState.webrtc.camEnabled;
-                }
-                const btn = document.getElementById('meeting-cam-btn');
-                btn.innerHTML = AppState.webrtc.camEnabled ? '<i class="ph-fill ph-video-camera text-lg text-white"></i>' : '<i class="ph-fill ph-video-camera-slash text-lg text-red-500"></i>';
-                
-                const vid = document.getElementById('meeting-local-video');
-                const avatar = document.getElementById('meeting-local-avatar');
-                
-                if(AppState.webrtc.camEnabled) {
-                    vid.classList.remove('hidden');
-                    avatar.classList.add('hidden');
-                } else {
-                    vid.classList.add('hidden');
-                    avatar.classList.remove('hidden');
-                    const circ = document.getElementById('meeting-circle');
-                    circ.textContent = UI.getInitials(AppState.user.name);
-                    circ.className = `w-20 h-20 rounded-full ${AppState.user.color} flex items-center justify-center text-3xl font-bold shadow-lg`;
-                }
-            },
-            async toggleScreenShare() {
-                if(!AppState.activeMeeting.isHost && !AppState.activeMeeting.sharePrivilege) {
-                    UI.showToast("Host restricted participant screen sharing.", "error");
-                    return;
-                }
-
-                if(AppState.webrtc.screenEnabled) {
-                    this.stopScreenShare();
-                } else {
-                    try {
-                        const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
-                        AppState.webrtc.screenStream = stream;
-                        AppState.webrtc.screenEnabled = true;
-                        
-                        document.getElementById('meeting-share-btn').classList.add('bg-green-600', 'text-white');
-                        UI.showToast("Sharing your screen...");
-                        
-                        Meeting.createParticipantCard('screen-owner', 'Your Screen Feed', AppState.user.color, true, stream);
-                        
-                        stream.getVideoTracks()[0].onended = () => {
-                            this.stopScreenShare();
-                        };
-                    } catch (e) {
-                        UI.showToast("Screen share dismissed", "error");
-                    }
-                }
-            },
-            stopScreenShare() {
-                if(AppState.webrtc.screenStream) {
-                    AppState.webrtc.screenStream.getTracks().forEach(t => t.stop());
-                }
-                AppState.webrtc.screenEnabled = false;
-                document.getElementById('meeting-share-btn').classList.remove('bg-green-600', 'text-white');
-                const el = document.getElementById('card-screen-owner');
-                if(el) el.remove();
-                Meeting.recalculateLayoutGrid();
-            },
-            async togglePiP() {
-                const video = document.getElementById('meeting-local-video');
-                if(!video) return;
-                
-                try {
-                    if (document.pictureInPictureElement) {
-                        await document.exitPictureInPicture();
-                        AppState.webrtc.pipActive = false;
-                    } else {
-                        await video.requestPictureInPicture();
-                        AppState.webrtc.pipActive = true;
-                    }
-                } catch (e) {
-                    UI.showToast("PiP mode unsupported on this device.", "error");
-                }
-            },
-            stopAllTracks() {
-                if(AppState.webrtc.localStream) {
-                    AppState.webrtc.localStream.getTracks().forEach(t => t.stop());
-                }
-                this.stopScreenShare();
-            }
-        };
-
-        // Core Meeting Operations
-        const Meeting = {
-            viewMode: 'grid',
-            speechEngine: null,
-            
-            begin() {
-                UI.setView('meeting');
-                
-                const vid = document.getElementById('meeting-local-video');
-                vid.srcObject = AppState.webrtc.localStream;
-                
-                AppState.activeMeeting.startTime = Date.now();
-                this.runTimer();
-                
-                AppState.activeMeeting.locked = false;
-                
-                this.populateSimulatedGuests();
-                this.runActiveSpeakerSimulation();
-                
-                Sidebar.updateCounts();
-            },
-            runTimer() {
-                AppState.activeMeeting.timerToken = setInterval(() => {
-                    const elapsed = Math.floor((Date.now() - AppState.activeMeeting.startTime) / 1000);
-                    const m = Math.floor(elapsed / 60).toString().padStart(2, '0');
-                    const s = (elapsed % 60).toString().padStart(2, '0');
-                    document.getElementById('meeting-timer').textContent = `${m}:${s}`;
-                }, 1000);
-            },
-            populateSimulatedGuests() {
-                AppState.activeMeeting.participants = [];
-                const limit = Math.floor(Math.random() * 3) + 2;
-                
-                for(let i=0; i<limit; i++) {
-                    const userObj = {
-                        id: `p-${i}`,
-                        name: MOCK_NAMES[i],
-                        color: COLOR_CLASSES[i + 1] || 'bg-slate-700',
-                        hand: false
-                    };
-                    AppState.activeMeeting.participants.push(userObj);
-                    this.createParticipantCard(userObj.id, userObj.name, userObj.color);
-                }
-                
-                this.recalculateLayoutGrid();
-                Sidebar.renderPeople();
-            },
-            createParticipantCard(id, name, color, isScreen = false, customStream = null) {
-                const grid = document.getElementById('meeting-grid');
-                const card = document.createElement('div');
-                card.id = `card-${id}`;
-                card.className = "relative rounded-2xl overflow-hidden bg-slate-900 border border-darkBorder aspect-video w-full flex items-center justify-center shadow-xl transition-all duration-300";
-                
-                if(isScreen && customStream) {
-                    const video = document.createElement('video');
-                    video.srcObject = customStream;
-                    video.autoplay = true;
-                    video.className = "w-full h-full object-contain bg-black";
-                    card.appendChild(video);
-                } else {
-                    card.innerHTML = `
-                        <div class="absolute inset-0 bg-slate-900 flex items-center justify-center">
-                            <div class="w-20 h-20 rounded-full ${color} flex items-center justify-center text-3xl font-extrabold text-white shadow-xl animate-pulse">
-                                ${UI.getInitials(name)}
-                            </div>
-                        </div>
-                        <div class="absolute bottom-3 left-3 bg-slate-950/80 backdrop-blur-md border border-darkBorder text-white text-xs px-2.5 py-1 rounded-lg flex items-center gap-2">
-                            <i class="ph-fill ph-microphone text-slate-400"></i>
-                            <span>${name}</span>
-                        </div>
-                        <div id="hand-indicator-${id}" class="absolute top-3 right-3 bg-yellow-500/25 border border-yellow-500/50 text-yellow-400 p-1.5 rounded-full hidden">
-                            <i class="ph-fill ph-hand text-sm"></i>
-                        </div>
-                    `;
-                }
-                
-                grid.appendChild(card);
-                this.recalculateLayoutGrid();
-            },
-            recalculateLayoutGrid() {
-                const grid = document.getElementById('meeting-grid');
-                const cards = grid.children;
-                const count = cards.length;
-                
-                if (count === 1) {
-                    grid.className = "flex-1 p-6 pb-24 grid grid-cols-1 max-w-4xl mx-auto items-center justify-center content-center gap-4";
-                } else if (count === 2) {
-                    grid.className = "flex-1 p-6 pb-24 grid grid-cols-1 md:grid-cols-2 max-w-5xl mx-auto items-center justify-center content-center gap-4";
-                } else if (count <= 4) {
-                    grid.className = "flex-1 p-6 pb-24 grid grid-cols-2 max-w-6xl mx-auto items-center justify-center content-center gap-4";
-                } else {
-                    grid.className = "flex-1 p-6 pb-24 grid grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto items-center justify-center content-center gap-4";
-                }
-            },
-            toggleViewMode() {
-                this.viewMode = this.viewMode === 'grid' ? 'speaker' : 'grid';
-                UI.showToast(`View mode changed to: ${this.viewMode.toUpperCase()}`);
-            },
-            toggleFullScreen() {
-                if(!document.fullscreenElement) {
-                    document.documentElement.requestFullscreen();
-                } else {
-                    document.exitFullscreen();
-                }
-            },
-            toggleWhiteboard() {
-                const wrap = document.getElementById('whiteboard-wrapper');
-                wrap.classList.toggle('hidden');
-                wrap.classList.toggle('flex');
-                if(!wrap.classList.contains('hidden')) {
-                    Whiteboard.init();
-                }
-            },
-            toggleCaptions() {
-                AppState.webrtc.captionsActive = !AppState.webrtc.captionsActive;
-                const btn = document.getElementById('meeting-cc-btn');
-                const overlay = document.getElementById('cc-overlay');
-                
-                if(AppState.webrtc.captionsActive) {
-                    btn.classList.add('bg-primary', 'text-white');
-                    overlay.classList.remove('hidden');
-                    this.initSpeechEngine();
-                } else {
-                    btn.classList.remove('bg-primary', 'text-white');
-                    overlay.classList.add('hidden');
-                    if(this.speechEngine) this.speechEngine.stop();
-                }
-            },
-            initSpeechEngine() {
-                const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
-                if(!Speech) {
-                    document.getElementById('cc-text').textContent = "[Closed Captioning Unsupported in this Browser]";
-                    return;
-                }
-                
-                this.speechEngine = new Speech();
-                this.speechEngine.continuous = true;
-                this.speechEngine.interimResults = true;
-                
-                this.speechEngine.onresult = (e) => {
-                    let trans = "";
-                    for(let i = e.resultIndex; i < e.results.length; ++i) {
-                        trans += e.results[i][0].transcript;
-                    }
-                    document.getElementById('cc-text').textContent = trans;
-                };
-                
-                this.speechEngine.onerror = () => {
-                    document.getElementById('cc-text').textContent = "[Captions failed to synchronize...]";
-                };
-                
-                this.speechEngine.start();
-            },
-            runActiveSpeakerSimulation() {
-                setInterval(() => {
-                    if (AppState.currentView !== 'meeting') return;
-                    
-                    const participants = AppState.activeMeeting.participants;
-                    if(participants.length === 0) return;
-                    
-                    const index = Math.floor(Math.random() * (participants.length + 1));
-                    
-                    document.querySelectorAll('#meeting-grid > div').forEach(card => {
-                        card.classList.remove('speaking-glow');
-                    });
-                    
-                    const badge = document.getElementById('live-speaker-badge');
-                    const label = document.getElementById('active-speaker-name');
-                    
-                    if(index === participants.length) {
-                        if(AppState.webrtc.micEnabled) {
-                            document.getElementById('card-local').classList.add('speaking-glow');
-                            badge.classList.remove('hidden');
-                            label.textContent = "You Speaking";
-                        } else {
-                            badge.classList.add('hidden');
-                        }
-                    } else {
-                        const p = participants[index];
-                        const card = document.getElementById(`card-${p.id}`);
-                        if(card) card.classList.add('speaking-glow');
-                        badge.classList.remove('hidden');
-                        label.textContent = `${p.name} Speaking`;
-                    }
-                }, 4000);
-            },
-            toggleRecording() {
-                AppState.activeMeeting.isRecording = !AppState.activeMeeting.isRecording;
-                const bar = document.getElementById('rec-bar');
-                const btn = document.getElementById('meeting-rec-btn');
-                
-                if(AppState.activeMeeting.isRecording) {
-                    bar.classList.remove('hidden');
-                    bar.classList.add('flex');
-                    btn.classList.add('bg-red-500', 'text-white');
-                    UI.showToast("Space session recording started.");
-                } else {
-                    bar.classList.add('hidden');
-                    bar.classList.remove('flex');
-                    btn.classList.remove('bg-red-500', 'text-white');
-                    UI.showToast("Recording file saved.");
-                }
-            },
-            toggleDiagnostics() {
-                const el = document.getElementById('diagnostics-hud');
-                el.classList.toggle('hidden');
-                
-                if(!el.classList.contains('hidden')) {
-                    setInterval(() => {
-                        document.getElementById('hud-ping').textContent = `${Math.floor(8 + Math.random() * 15)} ms`;
-                        document.getElementById('hud-cpu').textContent = `${Math.floor(10 + Math.random() * 15)} %`;
-                    }, 2000);
-                }
-            },
-            copyDirectLink() {
-                const domain = window.location.origin + window.location.pathname;
-                const link = `${domain}?joinId=${AppState.activeMeeting.id}&pwd=${AppState.activeMeeting.passcode}`;
-                navigator.clipboard.writeText(link);
-                UI.showToast("Secure Invitation link copied to clipboard!");
-            },
-            triggerEmoji(emoji) {
-                const overlay = document.getElementById('reactions-container');
-                const el = document.createElement('div');
-                el.className = "flex items-center gap-2 bg-slate-950/90 border border-darkBorder text-slate-100 text-xs px-3 py-1.5 rounded-full animate-bounce shadow-xl";
-                el.innerHTML = `<span class="text-lg">${emoji}</span> <span>${AppState.user.name}</span>`;
-                overlay.appendChild(el);
-                
-                setTimeout(() => el.remove(), 2500);
-            },
-            raiseHand() {
-                AppState.activeMeeting.handRaised = !AppState.activeMeeting.handRaised;
-                this.triggerEmoji("✋");
-                
-                const indicator = document.getElementById('queue-scroller');
-                indicator.classList.remove('hidden');
-                
-                if(AppState.activeMeeting.handRaised) {
-                    const row = document.createElement('div');
-                    row.id = "hand-row-local";
-                    row.className = "flex items-center justify-between text-xs bg-slate-950 border border-darkBorder rounded-lg p-2";
-                    row.innerHTML = `
-                        <span class="font-bold text-slate-300">You (Hand Raised)</span>
-                        <button onclick="Meeting.lowerLocalHand()" class="text-red-400 text-[10px] bg-red-500/10 px-2 py-0.5 rounded-md hover:bg-red-500/20">Lower</button>
-                    `;
-                    indicator.appendChild(row);
-                } else {
-                    const row = document.getElementById('hand-row-local');
-                    if(row) row.remove();
-                }
-            },
-            lowerLocalHand() {
-                AppState.activeMeeting.handRaised = false;
-                const row = document.getElementById('hand-row-local');
-                if(row) row.remove();
-                UI.showToast("Hand lowered.");
-            },
-            muteAll() {
-                UI.showToast("All guest microphones have been forced to mute.");
-            },
-            terminate() {
-                clearInterval(AppState.activeMeeting.timerToken);
-                
-                const elapsed = document.getElementById('meeting-timer').textContent;
-                let history = JSON.parse(localStorage.getItem('session_history') || '[]');
-                history.unshift({
-                    id: AppState.activeMeeting.id,
-                    duration: elapsed,
-                    date: new Date().toLocaleDateString()
-                });
-                localStorage.setItem('session_history', JSON.stringify(history));
-
-                document.getElementById('meeting-grid').innerHTML = `
-                    <div id="card-local" class="relative rounded-2xl overflow-hidden bg-slate-900 border border-darkBorder aspect-video w-full flex items-center justify-center shadow-xl transition-all duration-300">
-                        <video id="meeting-local-video" autoplay muted playsinline class="w-full h-full object-cover mirror"></video>
-                        <canvas id="meeting-canvas" class="absolute inset-0 w-full h-full object-cover hidden"></canvas>
-                        <div id="meeting-local-avatar" class="absolute inset-0 bg-slate-900 flex items-center justify-center hidden">
-                            <div id="meeting-circle" class="w-20 h-20 rounded-full flex items-center justify-center text-3xl font-extrabold text-white"></div>
-                        </div>
-                        <div class="absolute bottom-3 left-3 bg-slate-950/80 backdrop-blur-md border border-darkBorder text-white text-xs px-2.5 py-1 rounded-lg flex items-center gap-2">
-                            <i id="local-mic-badge" class="ph-fill ph-microphone text-blue-400"></i>
-                            <span>You (Host)</span>
-                        </div>
-                    </div>
-                `;
-                
-                UI.setView('dashboard');
-                Dashboard.init();
-            }
-        };
-
-        // Host Central Restriction Panel Controller
-        const Host = {
-            toggleRoomLock() {
-                AppState.activeMeeting.locked = !AppState.activeMeeting.locked;
-                const badge = document.getElementById('meeting-lock-badge');
-                const checkbox = document.getElementById('host-lock-check');
-                
-                if(AppState.activeMeeting.locked) {
-                    badge.className = "bg-red-500/10 text-red-400 border border-red-500/20 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 cursor-pointer";
-                    badge.innerHTML = '<i class="ph ph-lock-key"></i> <span>Locked Room</span>';
-                    checkbox.checked = true;
-                    UI.showToast("Meeting locked. No new participants can enter.");
-                } else {
-                    badge.className = "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 cursor-pointer";
-                    badge.innerHTML = '<i class="ph ph-lock-key-open"></i> <span>Unlocked Room</span>';
-                    checkbox.checked = false;
-                    UI.showToast("Meeting unlocked.");
-                }
-            }
-        };
-
-        // Breakout Rooms Controller
-        const Breakout = {
-            timerToken: null,
-            start() {
-                const banner = document.getElementById('breakout-banner');
-                banner.classList.remove('hidden');
-                banner.classList.add('flex');
-                UI.showToast("Breakout room division initialized.");
-                
-                let seconds = 30;
-                this.timerToken = setInterval(() => {
-                    seconds--;
-                    const min = Math.floor(seconds/60).toString().padStart(2,'0');
-                    const sec = (seconds%60).toString().padStart(2,'0');
-                    document.getElementById('breakout-timer').textContent = `${min}:${sec}`;
-                    
-                    if(seconds <= 0) {
-                        this.stop();
-                    }
-                }, 1000);
-            },
-            stop() {
-                clearInterval(this.timerToken);
-                document.getElementById('breakout-banner').classList.add('hidden');
-                document.getElementById('breakout-banner').classList.remove('flex');
-                UI.showToast("Breakout rooms collapsed. All returned to Main space.");
-            }
-        };
-
-        // Sidebar Navigation
-        const Sidebar = {
-            isOpen: false,
-            activeTab: 'chat',
-            
-            toggle(tab) {
-                if(this.isOpen && this.activeTab === tab) {
-                    this.close();
-                } else {
-                    this.open();
-                    this.setTab(tab);
-                }
-            },
-            open() {
-                this.isOpen = true;
-                document.getElementById('meeting-sidebar').style.width = '320px';
-            },
-            close() {
-                this.isOpen = false;
-                document.getElementById('meeting-sidebar').style.width = '0px';
-            },
-            setTab(tab) {
-                this.activeTab = tab;
-                document.querySelectorAll('#meeting-sidebar > div[id^="tab-panel"]').forEach(el => el.classList.add('hidden'));
-                document.getElementById(`tab-panel-${tab}`).classList.remove('hidden');
-                
-                document.querySelectorAll('#meeting-sidebar button[id^="btn-tab"]').forEach(btn => {
-                    btn.className = "px-2.5 py-1 text-xs font-bold rounded-lg text-slate-400";
-                });
-                document.getElementById(`btn-tab-${tab}`).className = "px-2.5 py-1 text-xs font-bold rounded-lg bg-slate-900 text-primary";
-            },
-            updateCounts() {
-                const count = AppState.activeMeeting.participants.length + 1;
-                document.getElementById('badge-people').textContent = count;
-            },
-            renderPeople() {
-                const container = document.getElementById('people-scroller');
-                container.innerHTML = '';
-                
-                const selfRow = document.createElement('div');
-                selfRow.className = "flex items-center justify-between p-2.5 bg-slate-950/50 rounded-xl border border-darkBorder";
-                selfRow.innerHTML = `
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-8 h-8 rounded-full ${AppState.user.color} flex items-center justify-center text-xs font-extrabold text-white">${UI.getInitials(AppState.user.name)}</div>
-                        <span class="text-xs font-bold">You (Host)</span>
-                    </div>
-                `;
-                container.appendChild(selfRow);
-                
-                AppState.activeMeeting.participants.forEach(p => {
-                    const row = document.createElement('div');
-                    row.className = "flex items-center justify-between p-2.5 bg-slate-900/40 rounded-xl border border-darkBorder text-xs";
-                    row.innerHTML = `
-                        <div class="flex items-center gap-2.5">
-                            <div class="w-8 h-8 rounded-full ${p.color} flex items-center justify-center text-xs font-extrabold text-white">${UI.getInitials(p.name)}</div>
-                            <span class="font-bold text-slate-300">${p.name}</span>
-                        </div>
-                        <div class="flex items-center gap-1">
-                            <button onclick="UI.showToast('${p.name} Muted.')" class="p-1.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg"><i class="ph-fill ph-microphone"></i></button>
-                            <button onclick="UI.showToast('${p.name} Video stopped.')" class="p-1.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg"><i class="ph-fill ph-video-camera"></i></button>
-                        </div>
-                    `;
-                    container.appendChild(row);
-                });
-            }
-        };
-
-        // Meeting Chat Manager
-        const Chat = {
-            submitMessage(e) {
-                e.preventDefault();
-                const input = document.getElementById('chat-msg-input');
-                const val = input.value.trim();
-                if(!val) return;
-                
-                const message = {
-                    sender: AppState.user.name,
-                    text: val,
-                    isSelf: true,
-                    time: new Date().toLocaleTimeString(undefined, {hour: '2-digit', minute:'2-digit'})
-                };
-                
-                this.append(message);
-                input.value = '';
-                
-                setTimeout(() => {
-                    if(AppState.activeMeeting.participants.length > 0) {
-                        const randomUser = AppState.activeMeeting.participants[0];
-                        this.append({
-                            sender: randomUser.name,
-                            text: "I confirm receiving this message.",
-                            isSelf: false,
-                            time: new Date().toLocaleTimeString(undefined, {hour: '2-digit', minute:'2-digit'})
-                        });
-                    }
-                }, 1500);
-            },
-            append(msg) {
-                const scroller = document.getElementById('chat-scroller');
-                const el = document.createElement('div');
-                
-                if(msg.isSelf) {
-                    el.className = "flex flex-col items-end gap-1";
-                    el.innerHTML = `
-                        <span class="text-[10px] text-slate-500 font-bold">${msg.sender} • ${msg.time}</span>
-                        <div class="bg-primary text-white text-xs px-3.5 py-2 rounded-2xl rounded-tr-none max-w-[85%] leading-relaxed">${msg.text}</div>
-                    `;
-                } else {
-                    el.className = "flex flex-col items-start gap-1";
-                    el.innerHTML = `
-                        <span class="text-[10px] text-slate-500 font-bold">${msg.sender} • ${msg.time}</span>
-                        <div class="bg-slate-900 text-slate-100 text-xs px-3.5 py-2 rounded-2xl rounded-tl-none max-w-[85%] border border-darkBorder leading-relaxed">${msg.text}</div>
-                    `;
-                }
-                
-                scroller.appendChild(el);
-                scroller.scrollTop = scroller.scrollHeight;
-            }
-        };
-
-        // Collaborative Notepad System
-        const Notes = {
-            export() {
-                const val = document.getElementById('notes-textarea').value;
-                if(!val.trim()) {
-                    UI.showToast("No text notes detected to export.", "error");
-                    return;
-                }
-                const blob = new Blob([val], {type: "text/plain;charset=utf-8"});
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `MeetFlow_Notes_${AppState.activeMeeting.id}.txt`;
-                a.click();
-                UI.showToast("Notes exported successfully.");
-            }
-        };
-
-        // Interactive Polls System
-        const Polls = {
-            options: { A: 0, B: 0 },
-            initiatePoll() {
-                const q = document.getElementById('poll-question').value;
-                const opt1 = document.getElementById('poll-opt1').value;
-                const opt2 = document.getElementById('poll-opt2').value;
-                
-                if(!q || !opt1 || !opt2) {
-                    UI.showToast("Provide all poll values.", "error");
-                    return;
-                }
-                
-                document.getElementById('live-poll-question').textContent = q;
-                document.getElementById('label-opt1').textContent = opt1;
-                document.getElementById('label-opt2').textContent = opt2;
-                
-                this.options = { A: 0, B: 0 };
-                this.updateUI();
-                
-                document.getElementById('active-poll-card').classList.remove('hidden');
-                UI.showToast("Interactive Poll launched!");
-            },
-            vote(choice) {
-                if(choice === 1) this.options.A++;
-                else this.options.B++;
-                
-                this.updateUI();
-                UI.showToast("Your vote has been cast.");
-            },
-            updateUI() {
-                const total = this.options.A + this.options.B || 1;
-                const perA = Math.round((this.options.A / total) * 100);
-                const perB = Math.round((this.options.B / total) * 100);
-                
-                document.getElementById('percent-opt1').textContent = `${perA}%`;
-                document.getElementById('percent-opt2').textContent = `${perB}%`;
-                
-                document.getElementById('bar-opt1').style.width = `${perA}%`;
-                document.getElementById('bar-opt2').style.width = `${perB}%`;
-            }
-        };
-
-        // File Sharing Panel Sim
-        const Files = {
-            simulateUpload(e) {
-                const file = e.target.files[0];
-                if(!file) return;
-                
-                const container = document.getElementById('files-scroller');
-                const bar = document.createElement('div');
-                bar.className = "bg-slate-950 border border-darkBorder rounded-xl p-3 text-xs space-y-2";
-                bar.innerHTML = `
-                    <div class="flex justify-between font-bold">
-                        <span class="truncate max-w-[150px]">${file.name}</span>
-                        <span id="load-val">0%</span>
-                    </div>
-                    <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden">
-                        <div id="load-bar" class="bg-primary h-full transition-all duration-300" style="width: 0%"></div>
-                    </div>
-                `;
-                container.appendChild(bar);
-                
-                let percent = 0;
-                const token = setInterval(() => {
-                    percent += 10;
-                    bar.querySelector('#load-val').textContent = `${percent}%`;
-                    bar.querySelector('#load-bar').style.width = `${percent}%`;
-                    
-                    if(percent >= 100) {
-                        clearInterval(token);
-                        UI.showToast("File uploaded & synchronized securely.");
-                    }
-                }, 200);
-            }
-        };
-
-        // Virtual soundboard chimes
-        const Soundboard = {
-            play(sfx) {
-                UI.showToast(`Sound effect triggered: ${sfx.toUpperCase()}`);
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = audioContext.createOscillator();
-                const gain = audioContext.createGain();
-                
-                osc.connect(gain);
-                gain.connect(audioContext.destination);
-                
-                if (sfx === 'chime') {
-                    osc.frequency.setValueAtTime(880, audioContext.currentTime); 
-                    gain.gain.setValueAtTime(0.3, audioContext.currentTime);
-                    osc.start();
-                    osc.stop(audioContext.currentTime + 0.35);
-                } else if (sfx === 'applause') {
-                    osc.type = 'triangle';
-                    osc.frequency.setValueAtTime(120, audioContext.currentTime);
-                    gain.gain.setValueAtTime(0.2, audioContext.currentTime);
-                    osc.start();
-                    osc.stop(audioContext.currentTime + 0.55);
-                } else {
-                    osc.frequency.setValueAtTime(330, audioContext.currentTime);
-                    gain.gain.setValueAtTime(0.2, audioContext.currentTime);
-                    osc.start();
-                    osc.stop(audioContext.currentTime + 0.2);
-                }
-            }
-        };
-
-        // Interactive Whiteboard Canvas Model
-        const Whiteboard = {
-            canvas: null,
-            ctx: null,
-            drawing: false,
-            brushType: 'pencil',
-            
-            init() {
-                this.canvas = document.getElementById('whiteboard-canvas');
-                this.ctx = this.canvas.getContext('2d');
-                this.resize();
-                
-                this.ctx.fillStyle = "#020617";
-                this.ctx.fillRect(0,0, this.canvas.width, this.canvas.height);
-                
-                this.canvas.addEventListener('mousedown', this.startDraw.bind(this));
-                this.canvas.addEventListener('mousemove', this.draw.bind(this));
-                this.canvas.addEventListener('mouseup', this.endDraw.bind(this));
-                
-                // Touch events
-                this.canvas.addEventListener('touchstart', (e) => {
-                    const t = e.touches[0];
-                    this.startDraw({ clientX: t.clientX, clientY: t.clientY });
-                });
-                this.canvas.addEventListener('touchmove', (e) => {
-                    const t = e.touches[0];
-                    this.draw({ clientX: t.clientX, clientY: t.clientY });
-                });
-                this.canvas.addEventListener('touchend', this.endDraw.bind(this));
-            },
-            resize() {
-                this.canvas.width = this.canvas.parentElement.clientWidth;
-                this.canvas.height = this.canvas.parentElement.clientHeight;
-            },
-            setBrush(type) {
-                this.brushType = type;
-                document.getElementById('wb-pencil').className = type === 'pencil' ? "p-1.5 rounded-lg bg-slate-800 text-white text-sm" : "p-1.5 rounded-lg text-slate-400 hover:text-white text-sm";
-                document.getElementById('wb-eraser').className = type === 'eraser' ? "p-1.5 rounded-lg bg-slate-800 text-white text-sm" : "p-1.5 rounded-lg text-slate-400 hover:text-white text-sm";
-            },
-            startDraw(e) {
-                this.drawing = true;
-                this.ctx.beginPath();
-                const rect = this.canvas.getBoundingClientRect();
-                this.ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
-            },
-            draw(e) {
-                if(!this.drawing) return;
-                const rect = this.canvas.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                
-                this.ctx.lineWidth = document.getElementById('wb-brush-size').value;
-                this.ctx.lineCap = 'round';
-                
-                if(this.brushType === 'pencil') {
-                    this.ctx.strokeStyle = document.getElementById('wb-color').value;
-                } else {
-                    this.ctx.strokeStyle = "#020617";
-                }
-                
-                this.ctx.lineTo(x, y);
-                this.ctx.stroke();
-            },
-            endDraw() {
-                this.drawing = false;
-            },
-            clear() {
-                this.ctx.fillStyle = "#020617";
-                this.ctx.fillRect(0,0, this.canvas.width, this.canvas.height);
-                UI.showToast("Whiteboard Cleared.");
-            },
-            export() {
-                const link = document.createElement('a');
-                link.download = "meetflow_whiteboard.png";
-                link.href = this.canvas.toDataURL();
-                link.click();
-                UI.showToast("Whiteboard saved.");
-            }
-        };
-
-        // Window Handlers
-        document.addEventListener('DOMContentLoaded', () => {
-            Storage.init();
-        });
-    </script>
 </body>
 </html>
